@@ -274,14 +274,41 @@ defineExpose({ refresh: loadList });
   gap: 8px;
 }
 
-/* 小方框 CSS 形状（替代 📦） */
+/* 服务器图标 - CSS 绘制（三条横线堆叠） */
 .box-icon {
-  width: 12px;
-  height: 12px;
-  border: 1.5px solid #8b949e;
-  border-radius: 2px;
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  justify-content: center;
   opacity: 0.7;
+}
+
+.box-icon::before,
+.box-icon::after {
+  content: "";
+  display: block;
+  height: 2px;
+  border-radius: 1px;
+  background: #8b949e;
+}
+
+.box-icon::before {
+  width: 100%;
+}
+
+.box-icon::after {
+  width: 60%;
+}
+
+/* 中间横线（通过内联元素模拟） */
+.list-item:hover .box-icon::before,
+.list-item:hover .box-icon::after,
+.list-item.selected .box-icon::before,
+.list-item.selected .box-icon::after {
+  background: #58a6ff;
 }
 
 .item-name {

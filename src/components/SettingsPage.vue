@@ -44,17 +44,17 @@ async function openStorageDir() {
           <p class="section-desc">{{ t("settings.language.description") }}</p>
         </div>
         <div class="lang-options">
-          <button
-            v-for="locale in supportedLocales"
-            :key="locale.key"
-            :class="['lang-btn', { active: currentLocale.value === locale.key }]"
-            @click="switchLanguage(locale.key)"
-          >
-            <span class="lang-radio">
-              <span class="radio-dot" v-if="currentLocale.value === locale.key"></span>
-            </span>
-            <span class="lang-label">{{ locale.label }}</span>
-          </button>
+          <div class="lang-toggle">
+            <button
+              v-for="locale in supportedLocales"
+              :key="locale.key"
+              :class="['lang-option', { active: currentLocale.value === locale.key }]"
+              @click="switchLanguage(locale.key)"
+            >
+              <span class="lang-code">{{ locale.key === 'zh-CN' ? '中' : 'EN' }}</span>
+              <span class="lang-name">{{ locale.label }}</span>
+            </button>
+          </div>
         </div>
       </section>
 
@@ -143,63 +143,63 @@ async function openStorageDir() {
   line-height: 1.5;
 }
 
-/* 语言选项 */
+/* 语言选项 - 切换开关样式 */
 .lang-options {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
 }
 
-.lang-btn {
+.lang-toggle {
   display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
   background: #0d1117;
   border: 1px solid #30363d;
   border-radius: 8px;
+  overflow: hidden;
+}
+
+.lang-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #8b949e;
+  background: transparent;
+  border: none;
   cursor: pointer;
   font-family: inherit;
-  font-size: 13px;
-  color: #c9d1d9;
-  transition: border-color 0.2s ease, background 0.2s ease;
+  transition: all 0.2s ease;
 }
 
-.lang-btn:hover {
-  border-color: #58a6ff;
+.lang-option:hover {
+  color: #e6edf3;
   background: #1a2233;
 }
 
-.lang-btn.active {
-  border-color: #58a6ff;
-  background: #1a2233;
+.lang-option.active {
+  color: #ffffff;
+  background: #1f6feb;
 }
 
-.lang-radio {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  border: 2px solid #30363d;
+.lang-code {
+  font-size: 12px;
+  font-weight: 700;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: border-color 0.2s ease;
 }
 
-.lang-btn.active .lang-radio {
-  border-color: #58a6ff;
+.lang-option.active .lang-code {
+  background: rgba(255, 255, 255, 0.25);
 }
 
-.radio-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #58a6ff;
-}
-
-.lang-label {
-  font-weight: 500;
+.lang-name {
+  white-space: nowrap;
 }
 
 /* 存储 */
