@@ -1,0 +1,180 @@
+/** English dictionary */
+const enUS = {
+  app: {
+    title: "McpStudio",
+    tabs: {
+      add: "Add MCP",
+      detail: "MCP Detail",
+      stats: "Usage Stats",
+      settings: "Settings",
+      marketplace: "Marketplace",
+    },
+    http: {
+      title: "HTTP Server",
+      port: "Port",
+      save: "Save Port",
+      address: "Address",
+    },
+    toast: {
+      portSaved: "Port saved",
+      portSaveFailed: "Save failed",
+    },
+  },
+  mcpList: {
+    title: "MCP Services",
+    refresh: "Refresh",
+    loading: "Loading...",
+    empty: {
+      text: "No MCP services",
+      hint: "Click \"Add MCP\" to get started",
+    },
+    toolCount: "{n} tools",
+    status: {
+      connected: "Connected",
+      disconnected: "Disconnected",
+    },
+    actions: {
+      connect: "Connect",
+      connecting: "Connecting...",
+      disconnect: "Disconnect",
+      disconnecting: "Disconnecting...",
+    },
+  },
+  mcpDetail: {
+    placeholder: "Select an MCP service from the sidebar",
+    status: {
+      connected: "Connected",
+      disconnected: "Disconnected",
+      running: "Running",
+      offline: "Offline",
+    },
+    actions: {
+      connect: "Connect",
+      connecting: "Connecting...",
+      disconnect: "Disconnect",
+      disconnecting: "Disconnecting...",
+      delete: "Delete",
+      deleting: "Deleting...",
+    },
+    info: {
+      description: "Description",
+      connectionType: "Connection Type",
+      status: "Status",
+      toolCount: "Tool Count",
+      noDescription: "No description",
+    },
+    connection: {
+      title: "Connection Config",
+    },
+    tools: {
+      title: "Tool List",
+      empty: "No available tools for this MCP service",
+      description: "Description",
+      paramsSchema: "Parameter Schema",
+      returns: "Return Type",
+      none: "None",
+    },
+    toast: {
+      copied: "Copied",
+      copyFailed: "Copy failed",
+      deleted: "Deleted",
+      deleteFailed: "Delete failed",
+      connected: "Connected",
+      connectFailed: "Connection failed",
+      disconnected: "Disconnected",
+      disconnectFailed: "Disconnect failed",
+    },
+    confirmDelete: "Are you sure you want to delete \"{name}\"?",
+  },
+  addMcp: {
+    title: "Add MCP Service",
+    subtitle: "Paste standard mcpServers JSON config to add one or more services",
+    label: "JSON Config",
+    placeholder: "Paste JSON config here...",
+    errors: {
+      empty: "Please enter JSON config",
+      parseError: "JSON parse error, check syntax",
+      invalidFormat: "Invalid format: expected mcpServers object, or object with name + connection",
+      noValid: "No valid MCP config found",
+    },
+    submit: "+ Add MCP Service",
+    submitting: "Adding...",
+    toast: {
+      added: "Added {n} MCP service(s)",
+      partial: "Added {added}, {failed} failed",
+    },
+  },
+  usageStats: {
+    title: "Usage Statistics",
+    recordCount: "{n} records",
+    limit: "Limit",
+    limitPlaceholder: "All",
+    query: "Query",
+    querying: "Querying...",
+    empty: {
+      text: "No usage records",
+      hint: "Usage statistics will appear here after using MCP tools",
+    },
+    columns: {
+      mcpName: "MCP Name",
+      toolName: "Tool Name",
+      count: "Usage Count",
+      lastUsed: "Last Used",
+    },
+  },
+  settings: {
+    title: "Settings",
+    language: {
+      title: "Language",
+      description: "Select your preferred display language",
+      zhCN: "Chinese",
+      enUS: "English",
+    },
+    storage: {
+      title: "Storage",
+      description: "Data directory for MCP configurations and cache",
+      openDir: "Open Directory",
+      path: "Path",
+    },
+    about: {
+      title: "About",
+      version: "Version",
+      description: "MCP service management tool for Tauri",
+    },
+    toast: {
+      langChanged: "Language changed to {lang}",
+      dirOpened: "Storage directory opened",
+    },
+  },
+  marketplace: {
+    title: "Marketplace",
+    subtitle: "Discover MCP tools from GitHub",
+    search: {
+      placeholder: "Search MCP tools...",
+      button: "Search",
+      searching: "Searching...",
+      label: "GitHub Topic",
+      topicMCP: "mcp-server",
+      topicMCPAlt: "modelcontextprotocol",
+    },
+    results: {
+      title: "Results",
+      empty: "No results found. Try a different search term.",
+      loading: "Loading...",
+      stars: "{n} stars",
+      language: "Language",
+      topics: "Topics",
+    },
+    install: {
+      button: "Install",
+      installed: "Installed",
+      installing: "Installing...",
+    },
+    toast: {
+      installed: "Installed {name}",
+      installFailed: "Install failed",
+    },
+  },
+};
+
+export default enUS;

@@ -1,0 +1,21 @@
+# <type>: <简短描述>
+# 
+# type 类型：
+#   feat     新功能
+#   fix      修复 bug
+#   docs     文档变更
+#   style    代码格式（不影响功能）
+#   refactor 重构（非新功能、非修复）
+#   perf     性能优化
+#   test     测试相关
+#   chore    构建/工具/依赖变更
+#   ci       CI/CD 配置变更
+# 
+# 示例：
+#   feat: 添加 MCP 市场搜索页面
+#   fix: 修复连接断开后工具列表未清空的问题
+#   chore: 更新 rmcp 子模块到最新版本
+# 
+# <详细描述>
+# 
+# <关联 issue>

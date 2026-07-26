@@ -1,0 +1,181 @@
+/** 中文简体字典 */
+const zhCN = {
+  app: {
+    title: "McpStudio",
+    tabs: {
+      add: "添加 MCP",
+      detail: "MCP 详情",
+      stats: "使用统计",
+      settings: "设置",
+      marketplace: "市场",
+    },
+    http: {
+      title: "HTTP 服务",
+      port: "端口号",
+      save: "保存端口",
+      address: "连接地址",
+    },
+    toast: {
+      portSaved: "端口已保存",
+      portSaveFailed: "保存失败",
+    },
+  },
+  mcpList: {
+    title: "MCP 服务列表",
+    refresh: "刷新",
+    loading: "加载中...",
+    empty: {
+      text: "暂无 MCP 服务",
+      hint: "点击「添加 MCP」开始配置",
+    },
+    toolCount: "{n} 个工具",
+    status: {
+      connected: "已连接",
+      disconnected: "未连接",
+    },
+    actions: {
+      connect: "连接",
+      connecting: "连接中...",
+      disconnect: "断开",
+      disconnecting: "断开中...",
+    },
+  },
+  mcpDetail: {
+    placeholder: "请从左侧列表选择一个 MCP 服务",
+    status: {
+      connected: "已连接",
+      disconnected: "未连接",
+      running: "运行中",
+      offline: "未连接",
+    },
+    actions: {
+      connect: "连接",
+      connecting: "连接中...",
+      disconnect: "断开",
+      disconnecting: "断开中...",
+      delete: "删除",
+      deleting: "删除中...",
+    },
+    info: {
+      description: "描述",
+      connectionType: "连接方式",
+      status: "状态",
+      toolCount: "工具数量",
+      noDescription: "暂无描述",
+    },
+    connection: {
+      title: "连接配置",
+    },
+    tools: {
+      title: "工具列表",
+      empty: "该 MCP 服务暂无可用工具",
+      description: "描述",
+      paramsSchema: "参数 Schema",
+      returns: "返回值说明",
+      none: "无",
+    },
+    toast: {
+      copied: "已复制",
+      copyFailed: "复制失败",
+      deleted: "已删除",
+      deleteFailed: "删除失败",
+      connected: "已连接",
+      connectFailed: "连接失败",
+      disconnected: "已断开",
+      disconnectFailed: "断开失败",
+    },
+    confirmDelete: '确定要删除 MCP 服务 "{name}" 吗？',
+  },
+  addMcp: {
+    title: "添加 MCP 服务",
+    subtitle: "粘贴标准的 mcpServers JSON 配置，支持批量添加",
+    label: "JSON 配置",
+    placeholder: "在此粘贴 JSON 配置...",
+    errors: {
+      empty: "请输入 JSON 配置",
+      parseError: "JSON 格式错误，请检查语法",
+      invalidFormat: "格式错误：需要 mcpServers 对象，或包含 name + connection 的对象",
+      noValid: "未找到有效的 MCP 配置",
+    },
+    submit: "+ 添加 MCP 服务",
+    submitting: "添加中...",
+    toast: {
+      added: "成功添加 {n} 个 MCP 服务",
+      partial: "成功添加 {added} 个，失败 {failed} 个",
+    },
+  },
+  usageStats: {
+    title: "使用统计",
+    recordCount: "{n} 条记录",
+    limit: "限制条数",
+    limitPlaceholder: "全部",
+    query: "查询",
+    querying: "查询中...",
+    empty: {
+      text: "暂无使用记录",
+      hint: "开始使用 MCP 工具后这里会显示统计",
+    },
+    columns: {
+      mcpName: "MCP 名称",
+      toolName: "工具名称",
+      count: "使用次数",
+      lastUsed: "最近使用",
+    },
+  },
+  settings: {
+    title: "设置",
+    language: {
+      title: "语言",
+      description: "选择界面显示语言",
+      zhCN: "中文",
+      enUS: "English",
+    },
+    storage: {
+      title: "存储",
+      description: "MCP 配置与缓存的数据目录",
+      openDir: "打开目录",
+      path: "路径",
+    },
+    about: {
+      title: "关于",
+      version: "版本",
+      description: "基于 Tauri 的 MCP 服务管理工具",
+    },
+    toast: {
+      langChanged: "语言已切换为 {lang}",
+      dirOpened: "存储目录已打开",
+    },
+  },
+  marketplace: {
+    title: "市场",
+    subtitle: "从 GitHub 发现 MCP 工具",
+    search: {
+      placeholder: "搜索 MCP 工具...",
+      button: "搜索",
+      searching: "搜索中...",
+      label: "GitHub 话题",
+      topicMCP: "mcp-server",
+      topicMCPAlt: "modelcontextprotocol",
+    },
+    results: {
+      title: "搜索结果",
+      empty: "未找到结果，请尝试其他搜索词",
+      loading: "加载中...",
+      stars: "{n} 星",
+      language: "语言",
+      topics: "话题",
+    },
+    install: {
+      button: "安装",
+      installed: "已安装",
+      installing: "安装中...",
+    },
+    toast: {
+      installed: "已安装 {name}",
+      installFailed: "安装失败",
+    },
+  },
+};
+
+export default zhCN;
+export type LocaleDict = typeof zhCN;

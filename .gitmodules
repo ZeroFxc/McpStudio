@@ -1,0 +1,3 @@
+[submodule "src-tauri/rust-sdk-rmcp"]
+	path = src-tauri/rust-sdk-rmcp
+	url = https://github.com/modelcontextprotocol/rust-sdk.git
