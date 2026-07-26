@@ -101,6 +101,13 @@ McpStudio/
 └── README.md
 ```
 
+## Documentation
+
+- [Contributing Guide](CONTRIBUTING-en.md)
+- [Code of Conduct](CODE_OF_CONDUCT-en.md)
+- [Changelog](CHANGELOG-en.md)
+- [Security Policy](SECURITY-en.md)
+
 ## License
 
 This project is open-sourced under the [Apache License 2.0](LICENSE).

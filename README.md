@@ -102,10 +102,19 @@ McpStudio/
 └── README.md
 ```
 
+## 文档
+
+- [贡献指南](CONTRIBUTING.md)
+- [行为准则](CODE_OF_CONDUCT.md)
+- [变更日志](CHANGELOG.md)
+- [安全策略](SECURITY.md)
+
 ## 许可证
 
 本项目代码基于 [Apache License 2.0](LICENSE) 开源。
 
 本项目使用的 rmcp 子模块（[modelcontextprotocol/rust-sdk](https://github.com/modelcontextprotocol/rust-sdk)）采用 Apache-2.0 / MIT 双许可证。
+
+---
 
 [English](README-en.md)

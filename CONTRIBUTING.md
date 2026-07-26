@@ -141,3 +141,7 @@ McpStudio/
 ## 许可证
 
 贡献的代码将采用与项目相同的 [Apache License 2.0](LICENSE) 许可证。
+
+---
+
+[English](CONTRIBUTING-en.md)
