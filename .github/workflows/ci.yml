@@ -20,6 +20,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
 
       - name: 安装前端依赖
         run: npm ci
@@ -34,6 +35,8 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           workspaces: src-tauri
+          cache-on-failure: true
+          shared-key: mcpstudio-rust
 
       - name: Rust 编译检查
         run: cargo check
