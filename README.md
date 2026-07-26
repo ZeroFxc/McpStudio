@@ -1,4 +1,15 @@
 # McpStudio
+<p align="center">
+  <img src="https://img.shields.io/badge/License-Apache%202.0-blue?style=flat" alt="License" />
+  <img src="https://img.shields.io/github/v/release/ZeroFxc/McpStudio?style=flat" alt="Release" />
+  <img src="https://img.shields.io/github/stars/ZeroFxc/McpStudio?style=flat" alt="Stars" />
+  <img src="https://img.shields.io/github/actions/workflow/status/ZeroFxc/McpStudio/ci.yml?style=flat&label=CI" alt="CI" />
+  <img src="https://img.shields.io/badge/Platform-Windows-0078D6?style=flat&logo=windows" alt="Platform" />
+  <img src="https://img.shields.io/badge/Tauri-2-FFC131?style=flat&logo=tauri&logoColor=white" alt="Tauri" />
+  <img src="https://img.shields.io/badge/Vue-3-4FC08D?style=flat&logo=vuedotjs&logoColor=white" alt="Vue" />
+  <img src="https://img.shields.io/badge/Rust-000000?style=flat&logo=rust&logoColor=white" alt="Rust" />
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white" alt="TypeScript" />
+</p>
 
 MCP 集市与路由中心 —— AI 通过连接 McpStudio 即可发现和使用所有已注册的 MCP 工具，无需逐个连接每个 MCP 服务器。
 
@@ -14,10 +25,12 @@ MCP 集市与路由中心 —— AI 通过连接 McpStudio 即可发现和使用
 
 ## 技术栈
 
-- **桌面框架**：[Tauri 2](https://tauri.app/)
-- **前端**：[Vue 3](https://vuejs.org/) + [TypeScript](https://www.typescriptlang.org/) + [Vite](https://vitejs.dev/)
-- **后端**：[Rust](https://www.rust-lang.org/) + [rmcp](https://github.com/modelcontextprotocol/rust-sdk)（MCP Rust SDK）
-- **HTTP 服务**：[Axum](https://github.com/tokio-rs/axum)
+| 类型 | 技术 |
+|------|------|
+| 桌面框架 | [Tauri 2](https://tauri.app/) |
+| 前端 | [Vue 3](https://vuejs.org/) + [TypeScript](https://www.typescriptlang.org/) + [Vite](https://vitejs.dev/) |
+| 后端 | [Rust](https://www.rust-lang.org/) + [rmcp](https://github.com/modelcontextprotocol/rust-sdk)（MCP Rust SDK） |
+| HTTP 服务 | [Axum](https://github.com/tokio-rs/axum) |
 
 ## 依赖与致谢
 
@@ -94,3 +107,5 @@ McpStudio/
 本项目代码基于 [Apache License 2.0](LICENSE) 开源。
 
 本项目使用的 rmcp 子模块（[modelcontextprotocol/rust-sdk](https://github.com/modelcontextprotocol/rust-sdk)）采用 Apache-2.0 / MIT 双许可证。
+
+[English](README-en.md)
