@@ -670,6 +670,7 @@ pub async fn run_stdio(state: Arc<RwLock<AppState>>) {
 /// 启动 MCP Server，通过 HTTP 对外提供服务
 pub async fn run_http(
     state: Arc<RwLock<AppState>>,
+    bind_address: &str,
     port: u16,
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let ct = tokio_util::sync::CancellationToken::new();
@@ -684,7 +685,7 @@ pub async fn run_http(
         StreamableHttpServerConfig::default().with_cancellation_token(ct.child_token()),
     );
 
-    let addr = format!("127.0.0.1:{}", port);
+    let addr = format!("{}:{}", bind_address, port);
     let router = axum::Router::new().nest_service("/mcp", service);
 
     let tcp_listener = tokio::net::TcpListener::bind(&addr).await?;

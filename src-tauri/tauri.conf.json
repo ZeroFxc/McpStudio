@@ -12,9 +12,12 @@
   "app": {
     "windows": [
       {
-        "title": "mcpstudio",
-        "width": 800,
-        "height": 600
+        "title": "McpStudio",
+        "width": 1000,
+        "height": 700,
+        "decorations": false,
+        "minWidth": 700,
+        "minHeight": 500
       }
     ],
     "security": {

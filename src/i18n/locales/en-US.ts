@@ -9,16 +9,6 @@ const enUS = {
       settings: "Settings",
       marketplace: "Marketplace",
     },
-    http: {
-      title: "HTTP Server",
-      port: "Port",
-      save: "Save Port",
-      address: "Address",
-    },
-    toast: {
-      portSaved: "Port saved",
-      portSaveFailed: "Save failed",
-    },
   },
   mcpList: {
     title: "MCP Services",
@@ -130,6 +120,17 @@ const enUS = {
       zhCN: "Chinese",
       enUS: "English",
     },
+    server: {
+      title: "HTTP Server",
+      description: "Restart the app after changing settings",
+      port: "Port",
+      bind: "Bind Address",
+      localOnly: "Localhost Only",
+      localAndLan: "Local + LAN",
+      url: "Address",
+      save: "Save Config",
+      restartHint: "Config saved. Restart the app to apply changes.",
+    },
     storage: {
       title: "Storage",
       description: "Data directory for MCP configurations and cache",
@@ -144,6 +145,7 @@ const enUS = {
     toast: {
       langChanged: "Language changed to {lang}",
       dirOpened: "Storage directory opened",
+      serverSaved: "Server config saved",
     },
   },
   marketplace: {

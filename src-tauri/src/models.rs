@@ -112,6 +112,9 @@ pub struct ServerConfig {
     /// HTTP 服务端口
     #[serde(default = "default_http_port")]
     pub http_port: u16,
+    /// HTTP 服务绑定地址（127.0.0.1 仅本地，0.0.0.0 支持局域网）
+    #[serde(default = "default_bind_address")]
+    pub bind_address: String,
     /// 启动时自动重连已注册的 MCP
     #[serde(default = "default_auto_connect")]
     pub auto_connect: bool,
@@ -119,6 +122,10 @@ pub struct ServerConfig {
 
 fn default_http_port() -> u16 {
     9277
+}
+
+fn default_bind_address() -> String {
+    "0.0.0.0".to_string()
 }
 
 fn default_auto_connect() -> bool {
@@ -129,6 +136,7 @@ impl Default for ServerConfig {
     fn default() -> Self {
         Self {
             http_port: 9277,
+            bind_address: "0.0.0.0".to_string(),
             auto_connect: true,
         }
     }

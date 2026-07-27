@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject } from "vue";
+import { ref, onMounted, inject } from "vue";
 import { invoke } from "@tauri-apps/api/core";
 import { useI18n, supportedLocales } from "../i18n";
 
@@ -24,6 +24,44 @@ async function openStorageDir() {
   try {
     await invoke("open_data_dir");
     showToast(t("settings.toast.dirOpened"), "success");
+  } catch (err) {
+    showToast(String(err), "error");
+  }
+}
+
+/** 服务器配置 */
+const serverPort = ref(9277);
+const bindAddress = ref("0.0.0.0");
+const localIps = ref<string[]>([]);
+
+/** 绑定地址选项 */
+const bindAddressOptions = [
+  { value: "0.0.0.0", label: t("settings.server.localAndLan") },
+  { value: "127.0.0.1", label: t("settings.server.localOnly") },
+];
+
+/** 获取当前服务器配置和本地 IP */
+onMounted(async () => {
+  try {
+    const config = await invoke<{ http_port: number; bind_address: string; auto_connect: boolean }>("get_server_config");
+    serverPort.value = config.http_port;
+    bindAddress.value = config.bind_address;
+  } catch {
+    // 获取失败时保持默认值
+  }
+  try {
+    localIps.value = await invoke<string[]>("get_local_ips");
+  } catch {
+    // 获取 IP 失败时忽略
+  }
+});
+
+/** 保存服务器配置 */
+async function saveServerConfig() {
+  try {
+    await invoke("set_http_port", { port: serverPort.value });
+    await invoke("set_bind_address", { address: bindAddress.value });
+    showToast(t("settings.toast.serverSaved"), "success");
   } catch (err) {
     showToast(String(err), "error");
   }
@@ -55,6 +93,50 @@ async function openStorageDir() {
               <span class="lang-name">{{ locale.label }}</span>
             </button>
           </div>
+        </div>
+      </section>
+
+      <!-- 服务器设置 -->
+      <section class="setting-section">
+        <div class="section-header">
+          <h3 class="section-title">{{ t("settings.server.title") }}</h3>
+          <p class="section-desc">{{ t("settings.server.description") }}</p>
+        </div>
+        <div class="server-config">
+          <div class="server-row">
+            <div class="form-group">
+              <label for="server-port">{{ t("settings.server.port") }}</label>
+              <input
+                id="server-port"
+                type="number"
+                v-model.number="serverPort"
+                min="1"
+                max="65535"
+              />
+            </div>
+            <div class="form-group">
+              <label for="bind-address">{{ t("settings.server.bind") }}</label>
+              <select id="bind-address" v-model="bindAddress">
+                <option
+                  v-for="opt in bindAddressOptions"
+                  :key="opt.value"
+                  :value="opt.value"
+                >{{ opt.label }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="server-urls">
+            <div class="url-item">
+              <span class="url-label">localhost:</span>
+              <code>http://localhost:{{ serverPort }}/mcp</code>
+            </div>
+            <div v-for="ip in localIps" :key="ip" class="url-item">
+              <span class="url-label">LAN:</span>
+              <code>http://{{ ip }}:{{ serverPort }}/mcp</code>
+            </div>
+          </div>
+          <div class="server-hint">{{ t("settings.server.restartHint") }}</div>
+          <button class="save-btn" @click="saveServerConfig">{{ t("settings.server.save") }}</button>
         </div>
       </section>
 
@@ -310,5 +392,118 @@ async function openStorageDir() {
   padding: 2px 8px;
   border-radius: 4px;
   border: 1px solid #30363d;
+}
+
+/* 服务器设置 */
+.server-config {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.server-row {
+  display: flex;
+  gap: 16px;
+}
+
+.server-row .form-group {
+  flex: 1;
+}
+
+.server-row .form-group label {
+  display: block;
+  font-size: 12px;
+  color: #8b949e;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.server-row .form-group input,
+.server-row .form-group select {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 13px;
+  background: #0d1117;
+  color: #e6edf3;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  outline: none;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.server-row .form-group input:focus,
+.server-row .form-group select:focus {
+  border-color: #58a6ff;
+}
+
+.server-row .form-group select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b949e' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 28px;
+}
+
+.server-urls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.url-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.url-label {
+  color: #8b949e;
+  flex-shrink: 0;
+  min-width: 72px;
+}
+
+.url-item code {
+  font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+  font-size: 12px;
+  color: #58a6ff;
+  background: #0d1117;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #30363d;
+  word-break: break-all;
+}
+
+.server-hint {
+  font-size: 12px;
+  color: #6e7681;
+  font-style: italic;
+}
+
+.save-btn {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #ffffff;
+  background: linear-gradient(135deg, #1f6feb, #58a6ff);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.save-btn:hover {
+  box-shadow: 0 0 12px rgba(88, 166, 255, 0.3);
+}
+
+.save-btn:active {
+  opacity: 0.85;
 }
 </style>

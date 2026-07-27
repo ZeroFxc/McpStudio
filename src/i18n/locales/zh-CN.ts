@@ -9,16 +9,6 @@ const zhCN = {
       settings: "设置",
       marketplace: "市场",
     },
-    http: {
-      title: "HTTP 服务",
-      port: "端口号",
-      save: "保存端口",
-      address: "连接地址",
-    },
-    toast: {
-      portSaved: "端口已保存",
-      portSaveFailed: "保存失败",
-    },
   },
   mcpList: {
     title: "MCP 服务列表",
@@ -130,6 +120,17 @@ const zhCN = {
       zhCN: "中文",
       enUS: "English",
     },
+    server: {
+      title: "HTTP 服务器",
+      description: "修改设置后需重启应用生效",
+      port: "端口号",
+      bind: "绑定地址",
+      localOnly: "仅本地 (localhost)",
+      localAndLan: "本地 + 局域网 (LAN)",
+      url: "访问地址",
+      save: "保存配置",
+      restartHint: "配置已保存，重启应用后生效",
+    },
     storage: {
       title: "存储",
       description: "MCP 配置与缓存的数据目录",
@@ -144,6 +145,7 @@ const zhCN = {
     toast: {
       langChanged: "语言已切换为 {lang}",
       dirOpened: "存储目录已打开",
+      serverSaved: "服务器配置已保存",
     },
   },
   marketplace: {

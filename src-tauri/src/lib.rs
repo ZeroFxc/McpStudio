@@ -73,10 +73,14 @@ pub fn run() {
         let app_state_guard = shared.blocking_read();
         app_state_guard.server_config.http_port
     };
+    let bind_address = {
+        let app_state_guard = shared.blocking_read();
+        app_state_guard.server_config.bind_address.clone()
+    };
     std::thread::spawn(move || {
         let rt = tokio::runtime::Runtime::new().unwrap();
         rt.block_on(async {
-            if let Err(e) = mcp_server::run_http(http_state, http_port).await {
+            if let Err(e) = mcp_server::run_http(http_state, &bind_address, http_port).await {
                 tracing::error!("HTTP MCP Server 启动失败: {:?}", e);
             }
         });
@@ -94,6 +98,8 @@ pub fn run() {
             commands::get_usage_stats,
             commands::get_server_config,
             commands::set_http_port,
+            commands::set_bind_address,
+            commands::get_local_ips,
             commands::open_data_dir,
         ])
         .run(tauri::generate_context!())

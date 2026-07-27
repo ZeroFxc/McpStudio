@@ -165,6 +165,18 @@ pub async fn set_http_port(
     Ok(())
 }
 
+/// 设置 HTTP 绑定地址
+#[tauri::command]
+pub async fn set_bind_address(
+    state: State<'_, SharedState>,
+    address: String,
+) -> Result<(), String> {
+    let mut app_state = state.state.write().await;
+    app_state.server_config.bind_address = address;
+    storage::save_state(&app_state);
+    Ok(())
+}
+
 /// 在系统文件管理器中打开数据目录
 #[tauri::command]
 pub async fn open_data_dir() -> Result<(), String> {
@@ -173,4 +185,12 @@ pub async fn open_data_dir() -> Result<(), String> {
     std::fs::create_dir_all(&dir).map_err(|e| format!("无法创建目录: {}", e))?;
     opener::open(&dir).map_err(|e| format!("无法打开目录: {}", e))?;
     Ok(())
+}
+
+/// 获取本机局域网 IP 地址列表
+#[tauri::command]
+pub async fn get_local_ips() -> Result<Vec<String>, String> {
+    let ip = local_ip_address::local_ip()
+        .map_err(|e| format!("获取本地 IP 失败: {}", e))?;
+    Ok(vec![ip.to_string()])
 }
