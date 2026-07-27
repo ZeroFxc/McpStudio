@@ -76,15 +76,15 @@ const isMaximized = ref(false);
 
 /** 窗口操作函数 */
 async function minimizeWindow() {
-  await appWindow.minimize();
+  try { await appWindow.minimize(); } catch (e) { console.error(e); }
 }
 
 async function toggleMaximize() {
-  await appWindow.toggleMaximize();
+  try { await appWindow.toggleMaximize(); } catch (e) { console.error(e); }
 }
 
 async function closeWindow() {
-  await appWindow.close();
+  try { await appWindow.close(); } catch (e) { console.error(e); }
 }
 
 /** 更新窗口最大化状态 */
@@ -180,16 +180,16 @@ async function onMcpDisconnected() {
     </Transition>
 
     <!-- 自定义标题栏 -->
-    <div class="titlebar">
+    <div class="titlebar" data-tauri-drag-region>
       <div class="titlebar-title">{{ t("app.title") }}</div>
       <div class="titlebar-controls">
-        <button class="titlebar-btn" @mousedown.stop="minimizeWindow">
+        <button class="titlebar-btn" @click="minimizeWindow">
           <span class="ctrl-icon ctrl-minimize"></span>
         </button>
-        <button class="titlebar-btn" @mousedown.stop="toggleMaximize">
+        <button class="titlebar-btn" @click="toggleMaximize">
           <span :class="['ctrl-icon', isMaximized ? 'ctrl-restore' : 'ctrl-maximize']"></span>
         </button>
-        <button class="titlebar-btn titlebar-close" @mousedown.stop="closeWindow">
+        <button class="titlebar-btn titlebar-close" @click="closeWindow">
           <span class="ctrl-icon ctrl-close"></span>
         </button>
       </div>
@@ -317,7 +317,6 @@ body {
   border-bottom: 1px solid #30363d;
   padding: 0 12px;
   user-select: none;
-  -webkit-app-region: drag;
   cursor: default;
 }
 
@@ -331,7 +330,6 @@ body {
 .titlebar-controls {
   display: flex;
   height: 100%;
-  -webkit-app-region: no-drag;
 }
 
 .titlebar-btn {
@@ -345,12 +343,10 @@ body {
   cursor: pointer;
   color: #8b949e;
   transition: background 0.15s ease, color 0.15s ease;
-  -webkit-app-region: no-drag;
 }
 
-/* 按钮内的图标也标记为不可拖拽 */
+/* 按钮内的图标不响应鼠标事件，由按钮处理 */
 .titlebar-btn .ctrl-icon {
-  -webkit-app-region: no-drag;
   pointer-events: none;
 }
 
