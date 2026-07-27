@@ -80,6 +80,8 @@ const mcpListRef = ref<InstanceType<typeof McpList> | null>(null);
 /** 窗口控制 */
 const appWindow = getCurrentWindow();
 const isMaximized = ref(false);
+/** 标记是否正在程序化切换最大化，阻止 onResized 干扰 */
+let toggling = false;
 
 /** 窗口操作函数 */
 async function minimizeWindow() {
@@ -92,12 +94,14 @@ async function minimizeWindow() {
 
 async function toggleMaximize() {
   try {
+    toggling = true;
     await appWindow.toggleMaximize();
-    // 等待窗口动画完成后再获取状态
-    await new Promise((r) => setTimeout(r, 150));
     isMaximized.value = await appWindow.isMaximized();
   } catch (e) {
     console.error("toggleMaximize:", e);
+  } finally {
+    // 延迟清除标志，确保 onResized 中忽略此次事件
+    setTimeout(() => { toggling = false; }, 300);
   }
 }
 
@@ -109,8 +113,9 @@ async function closeWindow() {
   }
 }
 
-/** 更新窗口最大化状态 */
+/** 更新窗口最大化状态（仅响应非程序化触发的 resize） */
 async function updateMaximizedState() {
+  if (toggling) return;
   try {
     isMaximized.value = await appWindow.isMaximized();
   } catch (e) {
