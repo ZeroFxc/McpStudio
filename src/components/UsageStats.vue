@@ -85,23 +85,26 @@ onMounted(loadStats);
           />
         </label>
         <button class="query-btn" @click="loadStats" :disabled="loading">
-          <span class="query-icon">↻</span>
+          <span v-if="loading" class="spinner"></span>
+          <span v-else class="query-icon">↻</span>
           {{ loading ? t("usageStats.querying") : t("usageStats.query") }}
         </button>
       </div>
     </div>
 
-    <div v-if="records.length === 0 && !loading" class="empty-state">
-      <div class="bar-icon">
-        <i></i>
-        <i></i>
-        <i></i>
+    <Transition name="fade">
+      <div v-if="records.length === 0 && !loading" class="empty-state">
+        <div class="bar-icon">
+          <i></i>
+          <i></i>
+          <i></i>
+        </div>
+        <div class="empty-text">{{ t("usageStats.empty.text") }}</div>
+        <div class="empty-hint">{{ t("usageStats.empty.hint") }}</div>
       </div>
-      <div class="empty-text">{{ t("usageStats.empty.text") }}</div>
-      <div class="empty-hint">{{ t("usageStats.empty.hint") }}</div>
-    </div>
+    </Transition>
 
-    <div v-else class="table-container">
+    <div v-if="records.length > 0 || (loading && records.length === 0)" class="table-container">
       <table class="stats-table">
         <thead>
           <tr>
@@ -112,26 +115,36 @@ onMounted(loadStats);
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(rec, idx) in records" :key="idx">
-            <td class="cell-mcp">
-              <span class="mcp-box-icon"></span>
-              {{ rec.mcp_name }}
-            </td>
-            <td class="cell-tool">{{ rec.tool_name }}</td>
-            <td class="cell-count">
-              <div class="count-bar-wrapper">
-                <div
-                  class="count-bar"
-                  :style="{
-                    width: barWidth(rec.count),
-                    background: barColor(rec.count),
-                  }"
-                ></div>
-                <span class="count-value">{{ rec.count }}</span>
-              </div>
-            </td>
-            <td class="cell-time">{{ formatTime(rec.last_used) }}</td>
-          </tr>
+          <template v-if="loading && records.length === 0">
+            <tr v-for="i in 5" :key="i" class="skeleton-row">
+              <td><div class="skeleton-block"></div></td>
+              <td><div class="skeleton-block"></div></td>
+              <td><div class="skeleton-block"></div></td>
+              <td><div class="skeleton-block"></div></td>
+            </tr>
+          </template>
+          <template v-else>
+            <tr v-for="(rec, idx) in records" :key="idx">
+              <td class="cell-mcp">
+                <span class="mcp-box-icon"></span>
+                {{ rec.mcp_name }}
+              </td>
+              <td class="cell-tool">{{ rec.tool_name }}</td>
+              <td class="cell-count">
+                <div class="count-bar-wrapper">
+                  <div
+                    class="count-bar"
+                    :style="{
+                      width: barWidth(rec.count),
+                      background: barColor(rec.count),
+                    }"
+                  ></div>
+                  <span class="count-value">{{ rec.count }}</span>
+                </div>
+              </td>
+              <td class="cell-time">{{ formatTime(rec.last_used) }}</td>
+            </tr>
+          </template>
         </tbody>
       </table>
     </div>
@@ -140,7 +153,7 @@ onMounted(loadStats);
 
 <style scoped>
 .usage-stats {
-  padding: 28px 32px;
+  padding: var(--mc-space-page-padding);
 }
 
 /* 头部 */
@@ -148,7 +161,7 @@ onMounted(loadStats);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: var(--mc-space-section-gap);
   flex-wrap: wrap;
   gap: 16px;
 }
@@ -161,7 +174,7 @@ onMounted(loadStats);
 
 .stats-header-left h2 {
   margin: 0;
-  font-size: 22px;
+  font-size: var(--mc-font-page-title);
   font-weight: 700;
   color: var(--mc-text-primary);
   letter-spacing: -0.3px;
@@ -195,7 +208,7 @@ onMounted(loadStats);
   background: var(--mc-bg-input);
   color: var(--mc-text-primary);
   border: 1px solid var(--mc-border-primary);
-  border-radius: 6px;
+  border-radius: var(--mc-radius-sm);
   outline: none;
   font-family: inherit;
   transition: border-color 0.2s ease;
@@ -215,7 +228,7 @@ onMounted(loadStats);
   background: var(--mc-bg-button);
   color: var(--mc-text-primary);
   border: 1px solid var(--mc-border-primary);
-  border-radius: 6px;
+  border-radius: var(--mc-radius-sm);
   cursor: pointer;
   font-family: inherit;
   transition: all 0.2s ease;
@@ -279,7 +292,7 @@ onMounted(loadStats);
 /* 表格容器 */
 .table-container {
   border: 1px solid var(--mc-border-primary);
-  border-radius: 8px;
+  border-radius: var(--mc-radius-md);
   overflow: hidden;
 }
 
@@ -352,7 +365,7 @@ onMounted(loadStats);
 
 /* 工具名称 */
 .cell-tool {
-  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-family: var(--mc-font-mono);
   color: var(--mc-accent-blue);
   font-size: 12px;
 }
@@ -391,6 +404,49 @@ onMounted(loadStats);
   color: var(--mc-text-muted);
   font-size: 12px;
   white-space: nowrap;
-  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-family: var(--mc-font-mono);
+}
+
+/* 查询按钮 spinner */
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--mc-border-primary);
+  border-top-color: var(--mc-accent-blue);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 空状态 fade 过渡 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* 骨架屏 */
+.skeleton-row td {
+  padding: 12px 16px;
+}
+
+.skeleton-block {
+  height: 14px;
+  border-radius: 4px;
+  background: var(--mc-border-primary);
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }
 </style>

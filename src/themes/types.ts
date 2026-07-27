@@ -102,6 +102,10 @@ export interface ThemeColors {
   heroBadgeDisconnectedBorder: string;
   heroBadgeConnectedText: string;
   heroBadgeDisconnectedText: string;
+  langCodeBg: string;
+  langCodeActiveBg: string;
+  themeSwatchActiveBorder: string;
+  selectArrowColor: string;
 }
 
 /** 主题定义 */

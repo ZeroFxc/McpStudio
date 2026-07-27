@@ -209,3 +209,60 @@ pub async fn get_local_ips() -> Result<Vec<String>, String> {
     ips.dedup();
     Ok(ips)
 }
+
+/// 环境检测结果
+#[derive(serde::Serialize)]
+pub struct EnvCheckResult {
+    pub installed: bool,
+    pub version: String,
+}
+
+/// 检测指定命令是否存在并获取版本号
+/// 优先使用 `--version`，失败时回退到 `-v` 或 `-V`
+#[tauri::command]
+pub async fn check_env(command: String) -> Result<EnvCheckResult, String> {
+    // 先检查命令是否存在（Windows 用 where，Unix 用 which）
+    #[cfg(target_os = "windows")]
+    let check_cmd = "where";
+    #[cfg(not(target_os = "windows"))]
+    let check_cmd = "which";
+
+    let exists = std::process::Command::new(check_cmd)
+        .arg(&command)
+        .stdout(std::process::Stdio::null())
+        .stderr(std::process::Stdio::null())
+        .status()
+        .map(|s| s.success())
+        .unwrap_or(false);
+
+    if !exists {
+        return Ok(EnvCheckResult {
+            installed: false,
+            version: String::new(),
+        });
+    }
+
+    // 获取版本号，依次尝试 --version、-v、-V
+    let version_flags = ["--version", "-v", "-V"];
+    let mut version = String::new();
+    for flag in &version_flags {
+        if let Ok(output) = std::process::Command::new(&command)
+            .arg(flag)
+            .output()
+        {
+            let stdout = String::from_utf8_lossy(&output.stdout);
+            let stderr = String::from_utf8_lossy(&output.stderr);
+            let combined = format!("{}{}", stdout, stderr).trim().to_string();
+            if !combined.is_empty() {
+                // 取第一行作为版本号
+                version = combined.lines().next().unwrap_or("").to_string();
+                break;
+            }
+        }
+    }
+
+    Ok(EnvCheckResult {
+        installed: true,
+        version,
+    })
+}

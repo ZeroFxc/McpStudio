@@ -161,7 +161,7 @@ async function submitJson() {
       <button class="submit-btn" @click="submitJson" :disabled="submitting">
         <span class="submit-btn-content">
           <span v-if="!submitting">{{ t("addMcp.submit") }}</span>
-          <span v-else>{{ t("addMcp.submitting") }}</span>
+          <span v-else><span class="spinner"></span>{{ t("addMcp.submitting") }}</span>
         </span>
       </button>
     </div>
@@ -171,16 +171,16 @@ async function submitJson() {
 <style scoped>
 .add-form {
   max-width: 720px;
-  padding: 28px 32px;
+  padding: var(--mc-space-page-padding);
 }
 
 .form-header {
-  margin-bottom: 24px;
+  margin-bottom: var(--mc-space-section-gap);
 }
 
 .form-header h2 {
   margin: 0 0 6px;
-  font-size: 22px;
+  font-size: var(--mc-font-page-title);
   font-weight: 700;
   color: var(--mc-text-primary);
   letter-spacing: -0.3px;
@@ -202,7 +202,7 @@ async function submitJson() {
   border-left: 3px solid var(--mc-accent-red);
   color: var(--mc-accent-red);
   padding: 12px 14px;
-  border-radius: 6px;
+  border-radius: var(--mc-radius-sm);
   margin-bottom: 20px;
   font-size: 13px;
   line-height: 1.5;
@@ -234,7 +234,7 @@ async function submitJson() {
 
 .editor-wrapper {
   border: 1px solid var(--mc-border-primary);
-  border-radius: 8px;
+  border-radius: var(--mc-radius-md);
   overflow: hidden;
   transition: border-color 0.2s ease;
   background: var(--mc-bg-input);
@@ -248,7 +248,7 @@ async function submitJson() {
   width: 100%;
   padding: 14px 16px;
   font-size: 13px;
-  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-family: var(--mc-font-mono);
   background: var(--mc-bg-input);
   color: var(--mc-text-primary);
   border: none;
@@ -278,7 +278,7 @@ async function submitJson() {
   color: var(--mc-text-white);
   background: var(--mc-btn-gradient);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--mc-radius-md);
   cursor: pointer;
   font-family: inherit;
   transition: all 0.2s ease;
@@ -291,7 +291,7 @@ async function submitJson() {
 }
 
 .submit-btn:active:not(:disabled) {
-  transform: translateY(0);
+  transform: scale(0.98);
 }
 
 .submit-btn:disabled {

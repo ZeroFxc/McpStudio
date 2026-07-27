@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, provide } from "vue";
+import { ref, computed, onMounted, provide } from "vue";
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { provideI18n } from "./i18n";
@@ -10,6 +10,7 @@ import AddMcpForm from "./components/AddMcpForm.vue";
 import UsageStats from "./components/UsageStats.vue";
 import SettingsPage from "./components/SettingsPage.vue";
 import Marketplace from "./components/Marketplace.vue";
+import EnvCheck from "./components/EnvCheck.vue";
 
 /** 初始化 i18n */
 const { t, currentLocale, setLocale } = provideI18n();
@@ -71,7 +72,7 @@ function showToast(text: string, type: "success" | "error" | "info" = "info") {
 provide("showToast", showToast);
 
 /** 当前活跃的标签页 */
-type TabKey = "add" | "detail" | "stats" | "settings" | "marketplace";
+type TabKey = "add" | "detail" | "stats" | "settings" | "marketplace" | "envCheck";
 
 const activeTab = ref<TabKey>("add");
 const selectedEntry = ref<McpEntry | null>(null);
@@ -144,14 +145,15 @@ onMounted(async () => {
   } catch { /* 忽略 */ }
 });
 
-/** 标签页配置 */
-const tabs: { key: TabKey; label: string }[] = [
-  { key: "add", label: t("app.tabs.add") },
-  { key: "detail", label: t("app.tabs.detail") },
-  { key: "stats", label: t("app.tabs.stats") },
-  { key: "marketplace", label: t("app.tabs.marketplace") },
-  { key: "settings", label: t("app.tabs.settings") },
-];
+/** 标签页配置（computed 响应语言切换） */
+const tabs = computed(() => [
+  { key: "add" as TabKey, label: t("app.tabs.add") },
+  { key: "detail" as TabKey, label: t("app.tabs.detail") },
+  { key: "stats" as TabKey, label: t("app.tabs.stats") },
+  { key: "marketplace" as TabKey, label: t("app.tabs.marketplace") },
+  { key: "envCheck" as TabKey, label: t("app.tabs.envCheck") },
+  { key: "settings" as TabKey, label: t("app.tabs.settings") },
+]);
 
 /** 从侧边栏选中 MCP 时，切换到详情标签页 */
 function onMcpSelect(entry: McpEntry) {
@@ -214,7 +216,6 @@ async function onMcpDisconnected() {
 
     <!-- 自定义标题栏 -->
     <div class="titlebar" data-tauri-drag-region>
-      <div class="titlebar-title">{{ t("app.title") }}</div>
       <div class="titlebar-controls">
         <button class="titlebar-btn" @click="minimizeWindow">
           <span class="ctrl-icon ctrl-minimize"></span>
@@ -265,17 +266,21 @@ async function onMcpDisconnected() {
 
         <!-- 标签页内容 -->
         <div class="tab-content">
-          <AddMcpForm v-if="activeTab === 'add'" @added="onMcpAdded" />
-          <McpDetail
-            v-else-if="activeTab === 'detail'"
-            :entry="selectedEntry"
-            @deleted="onMcpDeleted"
-            @connected="onMcpConnected"
-            @disconnected="onMcpDisconnected"
-          />
-          <UsageStats v-else-if="activeTab === 'stats'" />
-          <Marketplace v-else-if="activeTab === 'marketplace'" />
-          <SettingsPage v-else-if="activeTab === 'settings'" />
+          <Transition name="tab-fade" mode="out-in">
+            <AddMcpForm v-if="activeTab === 'add'" :key="'add'" @added="onMcpAdded" />
+            <McpDetail
+              v-else-if="activeTab === 'detail'"
+              :key="'detail'"
+              :entry="selectedEntry"
+              @deleted="onMcpDeleted"
+              @connected="onMcpConnected"
+              @disconnected="onMcpDisconnected"
+            />
+            <UsageStats v-else-if="activeTab === 'stats'" :key="'stats'" />
+            <Marketplace v-else-if="activeTab === 'marketplace'" :key="'marketplace'" />
+            <EnvCheck v-else-if="activeTab === 'envCheck'" :key="'envCheck'" />
+            <SettingsPage v-else-if="activeTab === 'settings'" :key="'settings'" />
+          </Transition>
         </div>
       </main>
     </div>
@@ -326,6 +331,58 @@ body {
 ::-webkit-scrollbar-corner {
   background: transparent;
 }
+
+/* Firefox 滚动条 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--mc-scrollbar-thumb) transparent;
+}
+
+/* 全局焦点环 - 键盘导航可见 */
+:focus-visible {
+  outline: 2px solid var(--mc-accent-blue);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 按钮全局 active 状态 */
+button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* 等宽字体 CSS 变量 */
+:root {
+  --mc-font-mono: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+  /* 统一间距 */
+  --mc-space-page-padding: 28px 32px;
+  --mc-space-section-gap: 24px;
+  --mc-space-card-padding: 20px 22px;
+  /* 统一字号 */
+  --mc-font-page-title: 22px;
+  --mc-font-section-title: 14px;
+  --mc-font-hero-title: 26px;
+  /* 统一圆角 */
+  --mc-radius-sm: 6px;
+  --mc-radius-md: 8px;
+  --mc-radius-lg: 12px;
+  --mc-radius-pill: 20px;
+}
+
+/* 全局加载 spinner */
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--mc-border-primary);
+  border-top-color: var(--mc-accent-blue);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
 </style>
 
 <style scoped>
@@ -335,7 +392,7 @@ body {
   height: 100vh;
   width: 100vw;
   border: 1px solid var(--mc-window-border);
-  border-radius: 8px;
+  border-radius: var(--mc-radius-md);
   overflow: hidden;
 }
 
@@ -343,21 +400,42 @@ body {
 .titlebar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   height: 36px;
   flex-shrink: 0;
   background: var(--mc-titlebar-bg);
   border-bottom: 1px solid var(--mc-titlebar-border);
-  padding: 0 12px;
+  padding: 0 4px;
   user-select: none;
   cursor: default;
+  position: relative;
+  overflow: hidden;
 }
 
-.titlebar-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--mc-titlebar-text);
-  padding-left: 8px;
+/* 霓虹边框慢速动画 */
+.titlebar::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--mc-accent-blue) 20%,
+    var(--mc-accent-purple) 50%,
+    var(--mc-accent-blue) 80%,
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: neon-drift 4s linear infinite;
+  opacity: 0.5;
+}
+
+@keyframes neon-drift {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 .titlebar-controls {
@@ -475,7 +553,7 @@ body {
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  border-radius: 8px;
+  border-radius: var(--mc-radius-md);
   font-size: 13px;
   font-weight: 500;
   color: var(--mc-text-primary);
@@ -621,6 +699,22 @@ body {
   overflow-y: auto;
 }
 
+/* 标签页切换过渡 */
+.tab-fade-enter-active,
+.tab-fade-leave-active {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.tab-fade-enter-from {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.tab-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
 /* ===== 侧边栏服务器状态条 ===== */
 .server-status-bar {
   margin-top: auto;
@@ -631,7 +725,7 @@ body {
   border-top: 1px solid var(--mc-status-bar-border);
   background: var(--mc-status-bar-bg);
   font-size: 11px;
-  font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+  font-family: var(--mc-font-mono);
   color: var(--mc-status-bar-text);
   flex-shrink: 0;
 }

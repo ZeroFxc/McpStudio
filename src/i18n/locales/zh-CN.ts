@@ -8,6 +8,7 @@ const zhCN = {
       stats: "使用统计",
       settings: "设置",
       marketplace: "市场",
+      envCheck: "环境",
     },
   },
   mcpList: {
@@ -182,6 +183,32 @@ const zhCN = {
     toast: {
       installed: "已安装 {name}",
       installFailed: "安装失败",
+    },
+    preview: {
+      back: "返回搜索结果",
+      openGithub: "在 GitHub 打开",
+      files: "文件",
+      readme: "README",
+      loadingRepo: "加载仓库信息中...",
+      loadingReadme: "加载 README...",
+      noReadme: "暂无 README",
+    },
+  },
+  envCheck: {
+    title: "环境检测",
+    subtitle: "检测 MCP 常用的依赖环境是否已安装",
+    summary: "已安装 {installed} / 共 {total}",
+    checking: "检测中...",
+    notInstalled: "未安装",
+    expand: "展开",
+    collapse: "收起",
+    tools: {
+      python: "Python",
+      uv: "uv",
+      node: "Node.js",
+      npm: "npm",
+      git: "Git",
+      pip: "pip",
     },
   },
 };

@@ -216,7 +216,7 @@ async function saveServerConfig() {
 
 <style scoped>
 .settings-page {
-  padding: 24px 28px;
+  padding: var(--mc-space-page-padding);
   max-width: 640px;
 }
 
@@ -225,7 +225,7 @@ async function saveServerConfig() {
 }
 
 .page-title {
-  font-size: 20px;
+  font-size: var(--mc-font-page-title);
   font-weight: 700;
   color: var(--mc-text-primary);
   margin: 0;
@@ -234,14 +234,14 @@ async function saveServerConfig() {
 .settings-sections {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--mc-space-section-gap);
 }
 
 .setting-section {
   background: var(--mc-bg-card);
   border: 1px solid var(--mc-border-primary);
-  border-radius: 10px;
-  padding: 20px 22px;
+  border-radius: var(--mc-radius-md);
+  padding: var(--mc-space-card-padding);
 }
 
 .section-header {
@@ -249,7 +249,7 @@ async function saveServerConfig() {
 }
 
 .section-title {
-  font-size: 14px;
+  font-size: var(--mc-font-section-title);
   font-weight: 600;
   color: var(--mc-text-primary);
   margin: 0 0 4px;
@@ -271,7 +271,7 @@ async function saveServerConfig() {
   display: flex;
   background: var(--mc-lang-toggle-bg);
   border: 1px solid var(--mc-lang-toggle-border);
-  border-radius: 8px;
+  border-radius: var(--mc-radius-md);
   overflow: hidden;
 }
 
@@ -298,6 +298,9 @@ async function saveServerConfig() {
 .lang-option.active {
   color: var(--mc-lang-active-text);
   background: var(--mc-lang-active-bg);
+  box-shadow: 0 0 0 1px var(--mc-lang-active-bg);
+  position: relative;
+  z-index: 1;
 }
 
 .lang-code {
@@ -306,7 +309,7 @@ async function saveServerConfig() {
   width: 22px;
   height: 22px;
   border-radius: 4px;
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--mc-lang-code-bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -314,7 +317,7 @@ async function saveServerConfig() {
 }
 
 .lang-option.active .lang-code {
-  background: rgba(255, 255, 255, 0.25);
+  background: var(--mc-lang-code-active-bg);
 }
 
 .lang-name {
@@ -330,7 +333,7 @@ async function saveServerConfig() {
   display: flex;
   background: var(--mc-lang-toggle-bg);
   border: 1px solid var(--mc-lang-toggle-border);
-  border-radius: 8px;
+  border-radius: var(--mc-radius-md);
   overflow: hidden;
 }
 
@@ -357,6 +360,9 @@ async function saveServerConfig() {
 .theme-option.active {
   color: var(--mc-lang-active-text);
   background: var(--mc-lang-active-bg);
+  box-shadow: 0 0 0 1px var(--mc-lang-active-bg);
+  position: relative;
+  z-index: 1;
 }
 
 .theme-swatch {
@@ -376,7 +382,7 @@ async function saveServerConfig() {
 }
 
 .theme-option.active .theme-swatch {
-  border-color: rgba(255, 255, 255, 0.5);
+  border-color: var(--mc-theme-swatch-active-border);
 }
 
 .theme-name {
@@ -403,7 +409,7 @@ async function saveServerConfig() {
 }
 
 .storage-value {
-  font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+  font-family: var(--mc-font-mono);
   font-size: 12px;
   color: var(--mc-accent-blue);
   background: var(--mc-bg-input);
@@ -422,7 +428,7 @@ async function saveServerConfig() {
   color: var(--mc-text-primary);
   background: var(--mc-bg-button);
   border: 1px solid var(--mc-border-primary);
-  border-radius: 6px;
+  border-radius: var(--mc-radius-sm);
   cursor: pointer;
   font-family: inherit;
   transition: background 0.2s ease, border-color 0.2s ease;
@@ -484,7 +490,7 @@ async function saveServerConfig() {
 
 .about-value {
   color: var(--mc-text-primary);
-  font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+  font-family: var(--mc-font-mono);
   font-size: 12px;
   background: var(--mc-bg-input);
   padding: 2px 8px;
@@ -524,7 +530,7 @@ async function saveServerConfig() {
   background: var(--mc-bg-input);
   color: var(--mc-text-primary);
   border: 1px solid var(--mc-input-border);
-  border-radius: 6px;
+  border-radius: var(--mc-radius-sm);
   outline: none;
   font-family: inherit;
   box-sizing: border-box;
@@ -549,9 +555,11 @@ async function saveServerConfig() {
 .server-row .form-group select {
   cursor: pointer;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238b949e' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-image: linear-gradient(45deg, transparent 50%, var(--mc-select-arrow-color) 50%),
+    linear-gradient(135deg, var(--mc-select-arrow-color) 50%, transparent 50%);
+  background-position: calc(100% - 14px) 50%, calc(100% - 8px) 50%;
+  background-size: 6px 6px, 6px 6px;
   background-repeat: no-repeat;
-  background-position: right 10px center;
   padding-right: 28px;
 }
 
@@ -575,7 +583,7 @@ async function saveServerConfig() {
 }
 
 .url-item code {
-  font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+  font-family: var(--mc-font-mono);
   font-size: 12px;
   color: var(--mc-accent-blue);
   background: var(--mc-bg-input);
@@ -601,7 +609,7 @@ async function saveServerConfig() {
   color: var(--mc-text-white);
   background: var(--mc-btn-gradient);
   border: none;
-  border-radius: 6px;
+  border-radius: var(--mc-radius-md);
   cursor: pointer;
   font-family: inherit;
   transition: box-shadow 0.2s ease, opacity 0.2s ease;

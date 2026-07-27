@@ -107,5 +107,9 @@ export const lightTheme: Theme = {
     heroBadgeDisconnectedBorder: "rgba(101, 109, 118, 0.3)",
     heroBadgeConnectedText: "#1a7f37",
     heroBadgeDisconnectedText: "#656d76",
+    langCodeBg: "rgba(0, 0, 0, 0.08)",
+    langCodeActiveBg: "rgba(255, 255, 255, 0.3)",
+    themeSwatchActiveBorder: "rgba(255, 255, 255, 0.8)",
+    selectArrowColor: "#656d76",
   },
 };

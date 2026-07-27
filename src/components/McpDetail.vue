@@ -177,12 +177,12 @@ watch(() => props.entry, () => {
 
 <template>
   <div class="mcp-detail">
-    <div v-if="!entry" class="placeholder">
-      <div class="doc-icon"></div>
-      <p>{{ t("mcpDetail.placeholder") }}</p>
-    </div>
-
-    <div v-else class="detail-content">
+    <Transition name="fade" mode="out-in">
+      <div v-if="!entry" class="placeholder" key="placeholder">
+        <div class="doc-icon"></div>
+        <p>{{ t("mcpDetail.placeholder") }}</p>
+      </div>
+      <div v-else class="detail-content" key="content">
       <!-- Hero 区域 -->
       <div class="hero-section">
         <div class="hero-left">
@@ -199,7 +199,7 @@ watch(() => props.entry, () => {
             :disabled="busy"
             @click="connectMcp"
           >
-            {{ busy ? t("mcpDetail.actions.connecting") : t("mcpDetail.actions.connect") }}
+            <span v-if="busy" class="spinner"></span>{{ busy ? t("mcpDetail.actions.connecting") : t("mcpDetail.actions.connect") }}
           </button>
           <button
             v-else
@@ -207,7 +207,7 @@ watch(() => props.entry, () => {
             :disabled="busy"
             @click="disconnectMcp"
           >
-            {{ busy ? t("mcpDetail.actions.disconnecting") : t("mcpDetail.actions.disconnect") }}
+            <span v-if="busy" class="spinner"></span>{{ busy ? t("mcpDetail.actions.disconnecting") : t("mcpDetail.actions.disconnect") }}
           </button>
           <button class="btn btn-delete" @click="removeMcp" :disabled="deleting">
             {{ deleting ? t("mcpDetail.actions.deleting") : t("mcpDetail.actions.delete") }}
@@ -297,6 +297,7 @@ watch(() => props.entry, () => {
         </div>
       </div>
     </div>
+    </Transition>
   </div>
 </template>
 
@@ -339,7 +340,7 @@ watch(() => props.entry, () => {
 
 /* 详情内容 */
 .detail-content {
-  padding: 28px 32px;
+  padding: var(--mc-space-page-padding);
   max-width: 900px;
 }
 
@@ -348,7 +349,7 @@ watch(() => props.entry, () => {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: var(--mc-space-section-gap);
   flex-wrap: wrap;
   gap: 16px;
 }
@@ -362,7 +363,7 @@ watch(() => props.entry, () => {
 
 .hero-title {
   margin: 0;
-  font-size: 26px;
+  font-size: var(--mc-font-hero-title);
   font-weight: 700;
   color: var(--mc-text-primary);
   letter-spacing: -0.5px;
@@ -373,7 +374,7 @@ watch(() => props.entry, () => {
   align-items: center;
   gap: 6px;
   padding: 4px 12px;
-  border-radius: 20px;
+  border-radius: var(--mc-radius-pill);
   font-size: 12px;
   font-weight: 500;
 }
@@ -407,7 +408,7 @@ watch(() => props.entry, () => {
   font-size: 13px;
   font-weight: 500;
   border: 1px solid;
-  border-radius: 6px;
+  border-radius: var(--mc-radius-sm);
   cursor: pointer;
   font-family: inherit;
   transition: all 0.2s ease;
@@ -454,15 +455,15 @@ watch(() => props.entry, () => {
 /* 信息卡片网格 */
 .info-cards {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 12px;
-  margin-bottom: 24px;
+  margin-bottom: var(--mc-space-section-gap);
 }
 
 .info-card {
   background: var(--mc-bg-card);
   border: 1px solid var(--mc-border-primary);
-  border-radius: 8px;
+  border-radius: var(--mc-radius-md);
   padding: 14px;
   transition: border-color 0.2s ease;
 }
@@ -568,7 +569,7 @@ watch(() => props.entry, () => {
 }
 
 .conn-type {
-  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-family: var(--mc-font-mono);
   color: var(--mc-accent-blue) !important;
   font-size: 13px !important;
 }
@@ -596,10 +597,10 @@ watch(() => props.entry, () => {
 .json-block {
   background: var(--mc-bg-input);
   border: 1px solid var(--mc-border-primary);
-  border-radius: 8px;
+  border-radius: var(--mc-radius-md);
   padding: 14px 16px;
   font-size: 12px;
-  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-family: var(--mc-font-mono);
   line-height: 1.6;
   overflow-x: auto;
   margin: 0;
@@ -641,7 +642,7 @@ watch(() => props.entry, () => {
   padding: 20px;
   background: var(--mc-bg-card);
   border: 1px solid var(--mc-border-primary);
-  border-radius: 8px;
+  border-radius: var(--mc-radius-md);
   color: var(--mc-text-muted);
   font-size: 13px;
 }
@@ -650,7 +651,7 @@ watch(() => props.entry, () => {
 .tool-card {
   background: var(--mc-bg-card);
   border: 1px solid var(--mc-border-primary);
-  border-radius: 8px;
+  border-radius: var(--mc-radius-md);
   margin-bottom: 8px;
   overflow: hidden;
   transition: border-color 0.2s ease;
@@ -692,7 +693,7 @@ watch(() => props.entry, () => {
   font-size: 14px;
   font-weight: 600;
   color: var(--mc-tool-name-text);
-  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-family: var(--mc-font-mono);
 }
 
 /* 复制按钮：双矩形 CSS 形状 */
@@ -806,10 +807,10 @@ watch(() => props.entry, () => {
 .schema-block {
   background: var(--mc-bg-input);
   border: 1px solid var(--mc-border-primary);
-  border-radius: 6px;
+  border-radius: var(--mc-radius-sm);
   padding: 12px 14px;
   font-size: 12px;
-  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-family: var(--mc-font-mono);
   line-height: 1.6;
   overflow-x: auto;
   margin: 6px 0 0;
@@ -835,5 +836,15 @@ watch(() => props.entry, () => {
 
 :deep(.schema-block .json-null) {
   color: var(--mc-text-muted);
+}
+
+/* 占位状态淡入淡出过渡 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

@@ -101,15 +101,32 @@ defineExpose({ refresh: loadList });
       <h3>{{ t("mcpList.title") }}</h3>
       <button class="refresh-btn" @click="loadList" :disabled="loading">
         <span class="refresh-icon">↻</span>
+        <span v-if="loading" class="spinner"></span>
         {{ loading ? t("mcpList.loading") : t("mcpList.refresh") }}
       </button>
     </div>
 
-    <div v-if="mcpList.length === 0 && !loading" class="empty-state">
-      <div class="empty-box"></div>
-      <div class="empty-text">{{ t("mcpList.empty.text") }}</div>
-      <div class="empty-hint">{{ t("mcpList.empty.hint") }}</div>
+    <div v-if="loading && mcpList.length === 0" class="skeleton-list">
+      <div v-for="n in 3" :key="n" class="skeleton-item">
+        <div class="skeleton-main">
+          <div class="skeleton-box-icon"></div>
+          <div class="skeleton-name"></div>
+          <div class="skeleton-dot"></div>
+        </div>
+        <div class="skeleton-meta">
+          <div class="skeleton-tool-count"></div>
+          <div class="skeleton-conn-text"></div>
+        </div>
+      </div>
     </div>
+
+    <Transition name="fade">
+      <div v-if="mcpList.length === 0 && !loading" class="empty-state">
+        <div class="empty-box"></div>
+        <div class="empty-text">{{ t("mcpList.empty.text") }}</div>
+        <div class="empty-hint">{{ t("mcpList.empty.hint") }}</div>
+      </div>
+    </Transition>
 
     <ul class="list-items">
       <li
@@ -185,7 +202,7 @@ defineExpose({ refresh: loadList });
   background: var(--mc-bg-button);
   color: var(--mc-text-muted);
   border: 1px solid var(--mc-border-primary);
-  border-radius: 6px;
+  border-radius: var(--mc-radius-sm);
   cursor: pointer;
   font-family: inherit;
   transition: all 0.2s ease;
@@ -219,7 +236,7 @@ defineExpose({ refresh: loadList });
   width: 48px;
   height: 48px;
   border: 2px dashed var(--mc-text-dim);
-  border-radius: 8px;
+  border-radius: var(--mc-radius-md);
   opacity: 0.5;
   margin-bottom: 12px;
 }
@@ -251,7 +268,7 @@ defineExpose({ refresh: loadList });
   cursor: pointer;
   background: var(--mc-bg-card);
   border: 1px solid transparent;
-  border-radius: 8px;
+  border-radius: var(--mc-radius-md);
   transition: all 0.2s ease;
 }
 
@@ -374,7 +391,7 @@ defineExpose({ refresh: loadList });
   font-size: 11px;
   font-weight: 500;
   border: 1px solid;
-  border-radius: 20px;
+  border-radius: var(--mc-radius-pill);
   cursor: pointer;
   font-family: inherit;
   transition: all 0.2s ease;
@@ -405,5 +422,90 @@ defineExpose({ refresh: loadList });
 .disconnect-btn:hover:not(:disabled) {
   background: var(--mc-btn-delete-hover);
   border-color: color-mix(in srgb, var(--mc-accent-red) 50%, transparent);
+}
+
+/* fade 过渡动画 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* 骨架屏 */
+.skeleton-list {
+  padding: 4px 8px;
+}
+
+.skeleton-item {
+  padding: 10px 12px;
+  margin: 4px 0;
+  background: var(--mc-bg-card);
+  border: 1px solid var(--mc-border-primary);
+  border-radius: var(--mc-radius-md);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skeleton-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.skeleton-box-icon {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  background: var(--mc-border-primary);
+  flex-shrink: 0;
+}
+
+.skeleton-name {
+  height: 12px;
+  width: 60%;
+  border-radius: 4px;
+  background: var(--mc-border-primary);
+  flex: 1;
+}
+
+.skeleton-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--mc-border-primary);
+  flex-shrink: 0;
+}
+
+.skeleton-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+  padding-left: 22px;
+}
+
+.skeleton-tool-count {
+  height: 10px;
+  width: 40px;
+  border-radius: 10px;
+  background: var(--mc-border-primary);
+}
+
+.skeleton-conn-text {
+  height: 10px;
+  width: 60px;
+  border-radius: 4px;
+  background: var(--mc-border-primary);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
 }
 </style>
