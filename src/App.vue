@@ -18,6 +18,11 @@ const { t, currentLocale, setLocale } = provideI18n();
 provide("setLocale", setLocale);
 provide("currentLocale", currentLocale);
 
+/** 平台检测 */
+const isAndroid = ref(false);
+const isSidebarOpen = ref(false);
+provide("isAndroid", isAndroid);
+
 /** 初始化主题系统 */
 const { currentThemeName, setTheme, getThemes } = useTheme();
 provide("setTheme", setTheme);
@@ -77,6 +82,16 @@ const activeTab = ref<TabKey>("add");
 const selectedEntry = ref<McpEntry | null>(null);
 const mcpListRef = ref<InstanceType<typeof McpList> | null>(null);
 
+/** 切换侧边栏展开/收起（Android 抽屉） */
+function toggleSidebar() {
+  isSidebarOpen.value = !isSidebarOpen.value;
+}
+
+/** 关闭侧边栏 */
+function closeSidebar() {
+  isSidebarOpen.value = false;
+}
+
 /** 窗口控制 */
 const appWindow = getCurrentWindow();
 const isMaximized = ref(false);
@@ -127,6 +142,11 @@ onMounted(async () => {
   // 初始化主题
   initTheme();
   await updateMaximizedState();
+  // 检测平台
+  try {
+    const platform = await invoke<string>("get_platform");
+    isAndroid.value = platform === "android";
+  } catch { /* 忽略 */ }
   // 防抖的 resize 监听，处理 Win+↑ 等非按钮触发的最大化
   appWindow.onResized(() => {
     if (resizeTimer) clearTimeout(resizeTimer);
@@ -157,6 +177,9 @@ const tabs = computed(() => [
 function onMcpSelect(entry: McpEntry) {
   selectedEntry.value = entry;
   activeTab.value = "detail";
+  if (isAndroid.value) {
+    closeSidebar();
+  }
 }
 
 /** 添加成功后刷新列表并切换到详情页 */
@@ -201,7 +224,7 @@ async function onMcpDisconnected() {
 </script>
 
 <template>
-  <div class="app-layout">
+  <div class="app-layout" :class="{ 'android-ui': isAndroid }">
     <!-- Toast 通知 -->
     <Transition name="toast">
       <div v-if="toast" :class="['toast', `toast-${toast.type}`]">
@@ -213,8 +236,14 @@ async function onMcpDisconnected() {
     </Transition>
 
     <!-- 自定义标题栏 -->
-    <div class="titlebar" data-tauri-drag-region>
-      <div class="titlebar-controls">
+    <div class="titlebar" :class="{ 'titlebar-android': isAndroid }" data-tauri-drag-region>
+      <!-- Android 菜单按钮 -->
+      <button v-if="isAndroid" class="menu-btn" @click="toggleSidebar">
+        <span class="menu-icon"></span>
+      </button>
+      <span v-if="isAndroid" class="titlebar-title">{{ t("app.title") }}</span>
+      <!-- 桌面端窗口控制 -->
+      <div v-if="!isAndroid" class="titlebar-controls">
         <button class="titlebar-btn" @click="minimizeWindow">
           <span class="ctrl-icon ctrl-minimize"></span>
         </button>
@@ -228,8 +257,13 @@ async function onMcpDisconnected() {
     </div>
 
     <div class="app-body">
+      <!-- Android 侧边栏遮罩 -->
+      <Transition name="overlay-fade">
+        <div v-if="isAndroid && isSidebarOpen" class="sidebar-overlay" @click="closeSidebar"></div>
+      </Transition>
+
       <!-- 左侧侧边栏 -->
-      <aside class="sidebar">
+      <aside :class="['sidebar', { 'sidebar-drawer': isAndroid, 'sidebar-open': isSidebarOpen }]">
         <div class="sidebar-title">
           <h2>{{ t("app.title") }}</h2>
         </div>
@@ -250,8 +284,8 @@ async function onMcpDisconnected() {
 
       <!-- 右侧主区域 -->
       <main class="main-area">
-        <!-- 标签页导航 -->
-        <nav class="tab-bar">
+        <!-- 标签页导航（桌面端） -->
+        <nav v-if="!isAndroid" class="tab-bar">
           <button
             v-for="tab in tabs"
             :key="tab.key"
@@ -280,6 +314,19 @@ async function onMcpDisconnected() {
           </Transition>
         </div>
       </main>
+
+      <!-- Android 底部导航栏 -->
+      <nav v-if="isAndroid" class="bottom-nav">
+        <button
+          v-for="tab in tabs"
+          :key="tab.key"
+          :class="['bottom-nav-btn', { active: activeTab === tab.key }]"
+          @click="activeTab = tab.key"
+        >
+          <span :class="['nav-icon', `nav-icon-${tab.key}`]"></span>
+          <span class="nav-label">{{ t(`app.mobile.${tab.key}`) }}</span>
+        </button>
+      </nav>
     </div>
   </div>
 </template>
@@ -379,6 +426,392 @@ button:active:not(:disabled) {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* ===== Android 触摸适配（全局样式，影响子组件） ===== */
+/* 移除桌面端窗口装饰（需要 !important 覆盖 scoped 样式） */
+.android-ui.app-layout {
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+.android-ui .app-body {
+  flex-direction: column;
+}
+
+/* 侧边栏抽屉 - 避开状态栏 */
+.android-ui .sidebar-drawer {
+  padding-top: env(safe-area-inset-top, 0);
+}
+.android-ui .sidebar-drawer .sidebar-title {
+  padding-top: 12px;
+}
+
+/* ===== AddMcpForm ===== */
+.android-ui .add-form {
+  max-width: none;
+  padding: 16px;
+}
+
+.android-ui .form-group textarea {
+  min-height: 44px;
+  font-size: 15px;
+  padding: 14px;
+}
+
+.android-ui .submit-btn {
+  min-height: 48px;
+  font-size: 15px;
+}
+
+/* 模式切换按钮 */
+.android-ui .mode-switch {
+  border-radius: 10px;
+  padding: 4px;
+}
+.android-ui .mode-btn {
+  min-height: 40px;
+  font-size: 14px;
+  padding: 10px 16px;
+  border-radius: 8px;
+}
+
+/* URL 输入框 */
+.android-ui .url-input {
+  font-size: 15px;
+  padding: 14px 16px;
+  min-height: 48px;
+}
+
+/* ===== McpDetail ===== */
+.android-ui .detail-content {
+  max-width: none;
+  padding: 16px;
+}
+
+/* Hero 区域 - 垂直堆叠 */
+.android-ui .hero-section {
+  flex-direction: column;
+  gap: 12px;
+}
+.android-ui .hero-left {
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.android-ui .hero-title {
+  font-size: 20px;
+}
+.android-ui .hero-actions {
+  width: 100%;
+}
+.android-ui .hero-actions .btn {
+  flex: 1;
+  text-align: center;
+  min-height: 40px;
+  font-size: 14px;
+  padding: 10px 12px;
+}
+
+/* 信息卡片 - 单列 */
+.android-ui .info-cards {
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+.android-ui .info-card {
+  padding: 12px;
+}
+
+/* 连接配置 JSON 块 */
+.android-ui .json-block {
+  font-size: 11px;
+  padding: 12px;
+}
+
+/* 工具卡片 */
+.android-ui .tool-card {
+  margin-bottom: 6px;
+}
+.android-ui .tool-header {
+  padding: 14px 16px;
+}
+.android-ui .tool-name {
+  font-size: 13px;
+}
+.android-ui .tool-body {
+  padding: 0 14px 14px 28px;
+}
+
+/* ===== UsageStats ===== */
+.android-ui .usage-stats {
+  max-width: none;
+  padding: 16px;
+}
+
+/* 统计头部 - 垂直堆叠 */
+.android-ui .stats-header {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+}
+.android-ui .stats-controls {
+  width: 100%;
+  justify-content: space-between;
+}
+.android-ui .limit-input {
+  width: 56px;
+  padding: 8px 10px;
+  font-size: 14px;
+}
+.android-ui .query-btn {
+  padding: 8px 16px;
+  font-size: 13px;
+  min-height: 40px;
+}
+
+/* 表格 - 横向滚动 */
+.android-ui .table-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.android-ui .stats-table {
+  min-width: 480px;
+  font-size: 12px;
+}
+.android-ui .stats-table th {
+  padding: 8px 12px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+.android-ui .stats-table td {
+  padding: 10px 12px;
+  white-space: nowrap;
+}
+
+/* ===== SettingsPage ===== */
+.android-ui .settings-page {
+  max-width: none;
+  padding: 16px;
+}
+.android-ui .setting-section {
+  padding: 16px;
+}
+.android-ui .section-title {
+  font-size: 13px;
+}
+.android-ui .section-desc {
+  font-size: 11px;
+}
+
+/* 服务器行 - 垂直堆叠 */
+.android-ui .server-row {
+  flex-direction: column;
+  gap: 12px;
+}
+.android-ui .server-row .form-group input,
+.android-ui .server-row .form-group select {
+  padding: 10px 12px;
+  font-size: 14px;
+  min-height: 44px;
+}
+.android-ui .server-row .form-group select {
+  padding-right: 32px;
+}
+
+/* 语言/主题切换 */
+.android-ui .lang-toggle,
+.android-ui .theme-toggle {
+  width: 100%;
+}
+.android-ui .lang-option,
+.android-ui .theme-option {
+  flex: 1;
+  justify-content: center;
+  min-height: 40px;
+  font-size: 14px;
+}
+
+/* 保存按钮 */
+.android-ui .save-btn {
+  min-height: 44px;
+  font-size: 14px;
+  padding: 10px 24px;
+}
+
+/* 存储路径 */
+.android-ui .storage-path {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+/* 开关 */
+.android-ui .toggle-switch {
+  width: 52px;
+  height: 28px;
+}
+.android-ui .toggle-slider::before {
+  width: 22px;
+  height: 22px;
+  top: 3px;
+  left: 3px;
+}
+.android-ui .toggle-switch input:checked + .toggle-slider::before {
+  transform: translateX(24px);
+}
+
+/* ===== Marketplace ===== */
+.android-ui .marketplace-page {
+  max-width: none;
+  padding: 16px;
+}
+
+/* 搜索行 */
+.android-ui .search-row {
+  flex-direction: column;
+  gap: 8px;
+}
+.android-ui .search-input {
+  padding: 12px 14px;
+  font-size: 14px;
+  min-height: 44px;
+}
+.android-ui .search-btn {
+  min-height: 44px;
+  font-size: 14px;
+}
+
+/* 仓库卡片 */
+.android-ui .repo-card {
+  padding: 14px;
+}
+.android-ui .repo-name {
+  font-size: 13px;
+}
+
+/* 预览头部 */
+.android-ui .preview-header-top {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+.android-ui .preview-avatar {
+  width: 40px;
+  height: 40px;
+}
+.android-ui .preview-repo-name {
+  font-size: 16px;
+}
+.android-ui .preview-header-actions {
+  flex-wrap: wrap;
+}
+.android-ui .preview-header-actions .preview-btn-back,
+.android-ui .preview-header-actions .preview-btn-gh {
+  flex: 1;
+  min-height: 40px;
+  justify-content: center;
+  font-size: 13px;
+}
+
+/* 预览标签 */
+.android-ui .preview-tab {
+  padding: 12px 16px;
+  font-size: 14px;
+}
+
+/* 预览内容区 */
+.android-ui .preview-content {
+  max-height: 400px;
+  padding: 14px;
+}
+
+/* 文件树 */
+.android-ui .file-tree-item {
+  padding: 10px;
+}
+
+/* ===== McpList 侧边栏 ===== */
+.android-ui .list-item {
+  padding: 14px 12px;
+  margin: 6px 0;
+}
+.android-ui .action-btn {
+  min-height: 36px;
+  padding: 6px 16px;
+  font-size: 12px;
+}
+
+.android-ui .tab-content {
+  padding-bottom: 0;
+}
+
+/* Toast 通知 - 避开状态栏 */
+.android-ui .toast {
+  top: calc(16px + env(safe-area-inset-top, 0px));
+}
+
+/* ===== 通用移动端优化 ===== */
+
+/* 页面标题缩小 */
+.android-ui .page-title,
+.android-ui .form-header h2 {
+  font-size: 18px !important;
+}
+
+/* 卡片内边距减小 */
+.android-ui .search-area {
+  padding: 14px 16px;
+}
+
+/* 仓库名称防止溢出 */
+.android-ui .repo-meta {
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.android-ui .repo-name {
+  white-space: normal;
+  word-break: break-all;
+}
+
+/* 设置页 URL 项防止溢出 */
+.android-ui .url-item {
+  flex-wrap: wrap;
+}
+.android-ui .url-item code {
+  font-size: 11px;
+  word-break: break-all;
+}
+
+/* 详情页复制按钮始终可见（移动端无 hover） */
+.android-ui .tool-header-left .copy-btn {
+  opacity: 0.5 !important;
+}
+
+/* 表单错误卡片 */
+.android-ui .error-card {
+  font-size: 12px;
+  padding: 10px 12px;
+}
+
+/* 空状态提示 */
+.android-ui .empty-text {
+  font-size: 14px;
+}
+.android-ui .empty-hint {
+  font-size: 11px;
+}
+
+/* 确保表单输入框有足够大字号防止缩放 */
+.android-ui .form-group input,
+.android-ui .form-group textarea,
+.android-ui .form-group select,
+.android-ui .url-input,
+.android-ui .search-input {
+  font-size: 16px;
+}
+
+/* 按钮防连点 */
+.android-ui button:active {
+  opacity: 0.7;
 }
 </style>
 
@@ -755,5 +1188,246 @@ button:active:not(:disabled) {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* ===== Android 标题栏适配 ===== */
+.titlebar-android {
+  justify-content: flex-start;
+  gap: 8px;
+  padding: env(safe-area-inset-top, 0) 12px 0;
+  height: calc(44px + env(safe-area-inset-top, 0px));
+}
+
+.menu-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--mc-radius-sm);
+  flex-shrink: 0;
+}
+
+.menu-btn:active {
+  background: var(--mc-border-primary);
+}
+
+/* 菜单图标 - CSS 三条横线 */
+.menu-icon {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 18px;
+}
+
+.menu-icon::before,
+.menu-icon::after {
+  content: "";
+  display: block;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--mc-text-primary);
+}
+
+/* 中间横线通过 box-shadow 实现 */
+.menu-icon {
+  box-shadow: 0 5px 0 var(--mc-text-primary);
+}
+
+.titlebar-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--mc-text-primary);
+}
+
+/* ===== Android 侧边栏抽屉 ===== */
+.sidebar-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 280px;
+  z-index: 1000;
+  transform: translateX(-100%);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 4px 0 16px rgba(0, 0, 0, 0.3);
+}
+
+.sidebar-drawer.sidebar-open {
+  transform: translateX(0);
+}
+
+/* 遮罩层 */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+/* 遮罩过渡 */
+.overlay-fade-enter-active,
+.overlay-fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+
+.overlay-fade-enter-from,
+.overlay-fade-leave-to {
+  opacity: 0;
+}
+
+/* ===== Android 底部导航栏 ===== */
+.bottom-nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 56px;
+  flex-shrink: 0;
+  background: var(--mc-sidebar-bg);
+  border-top: 1px solid var(--mc-sidebar-border);
+  padding: 0 4px;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.bottom-nav-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-width: 56px;
+  height: 100%;
+  padding: 4px 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--mc-text-muted);
+  font-family: inherit;
+  transition: color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bottom-nav-btn.active {
+  color: var(--mc-accent-blue);
+}
+
+.nav-label {
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+/* 底部导航图标 - CSS 绘制 */
+.nav-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  position: relative;
+}
+
+/* 添加 - 加号 */
+.nav-icon-add::before,
+.nav-icon-add::after {
+  content: "";
+  position: absolute;
+  background: currentColor;
+  border-radius: 1px;
+}
+
+.nav-icon-add::before {
+  top: 50%;
+  left: 2px;
+  right: 2px;
+  height: 2px;
+  transform: translateY(-50%);
+}
+
+.nav-icon-add::after {
+  left: 50%;
+  top: 2px;
+  bottom: 2px;
+  width: 2px;
+  transform: translateX(-50%);
+}
+
+/* 详情 - 文档 */
+.nav-icon-detail {
+  border: 1.5px solid currentColor;
+  border-radius: 2px;
+}
+
+.nav-icon-detail::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  right: 2px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 1px;
+  box-shadow: 0 4px 0 currentColor, 0 8px 0 currentColor;
+}
+
+/* 统计 - 柱状图 */
+.nav-icon-stats::before {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  left: 2px;
+  width: 4px;
+  height: 6px;
+  background: currentColor;
+  border-radius: 1px;
+}
+
+.nav-icon-stats::after {
+  content: "";
+  position: absolute;
+  bottom: 2px;
+  left: 8px;
+  width: 4px;
+  height: 12px;
+  background: currentColor;
+  border-radius: 1px;
+  box-shadow: 6px -4px 0 currentColor;
+}
+
+/* 市场 - 网格 */
+.nav-icon-marketplace {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 2px;
+  padding: 2px;
+}
+
+.nav-icon-marketplace::before,
+.nav-icon-marketplace::after {
+  content: "";
+  background: currentColor;
+  border-radius: 1px;
+  grid-column: span 1;
+}
+
+/* 设置 - 齿轮 */
+.nav-icon-settings {
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+}
+
+.nav-icon-settings::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--mc-sidebar-bg);
 }
 </style>

@@ -17,12 +17,42 @@ const emit = defineEmits<{
   (e: "added", entry: McpEntry): void;
 }>();
 
-/** 从 App.vue 注入的 Toast 函数 */
+/** 从 App.vue 注入 */
 const showToast = inject<(text: string, type?: "success" | "error" | "info") => void>("showToast", () => {});
+const isAndroid = inject<{ value: boolean }>("isAndroid", { value: false });
 
+/** 输入模式：JSON 或 URL */
+type InputMode = "json" | "url";
+const inputMode = ref<InputMode>(isAndroid.value ? "url" : "json");
+
+/** JSON 模式 */
 const jsonInput = ref("");
 const submitting = ref(false);
+
+/** URL 模式 */
+const urlInput = ref("");
+const urlNameInput = ref("");
+const urlDescInput = ref("");
+
+/** 错误信息 */
 const errorMsg = ref("");
+
+/** 从 URL 中提取域名作为默认名称 */
+function extractDomain(url: string): string {
+  try {
+    const u = new URL(url);
+    return u.hostname;
+  } catch {
+    return "";
+  }
+}
+
+/** 监听 URL 输入变化，自动填充名称 */
+function onUrlInput() {
+  if (!urlNameInput.value) {
+    urlNameInput.value = extractDomain(urlInput.value);
+  }
+}
 
 /** 标准 mcpServers 配置项 */
 interface ServerConfig {
@@ -80,7 +110,6 @@ async function submitJson() {
     return;
   }
 
-  // 兼容两种格式：标准 mcpServers 和内部格式
   let entries: Array<{ name: string; description: string; connection: any }>;
   if (raw.mcpServers) {
     entries = normalizeServers(raw);
@@ -96,6 +125,42 @@ async function submitJson() {
     return;
   }
 
+  await addEntries(entries);
+}
+
+/** 提交 URL 模式 */
+async function submitUrl() {
+  errorMsg.value = "";
+
+  const url = urlInput.value.trim();
+  if (!url) {
+    errorMsg.value = t("addMcp.errors.urlEmpty");
+    return;
+  }
+
+  // 验证 URL 格式
+  if (!/^https?:\/\/.+/.test(url)) {
+    errorMsg.value = t("addMcp.errors.urlInvalid");
+    return;
+  }
+
+  const name = urlNameInput.value.trim() || extractDomain(url) || "MCP Service";
+  const description = urlDescInput.value.trim();
+
+  await addEntries([
+    {
+      name,
+      description,
+      connection: {
+        type: "streamable_http",
+        url,
+      },
+    },
+  ]);
+}
+
+/** 通用添加逻辑 */
+async function addEntries(entries: Array<{ name: string; description: string; connection: any }>) {
   submitting.value = true;
   let added = 0;
   let errors: string[] = [];
@@ -122,13 +187,26 @@ async function submitJson() {
   if (added > 0) {
     showToast(t("addMcp.toast.added", { n: added }), "success");
     emit("added", { name: entries[0].name, description: "", connection: entries[0].connection, tools: [], connected: false });
+    // 清空表单
     jsonInput.value = "";
+    urlInput.value = "";
+    urlNameInput.value = "";
+    urlDescInput.value = "";
   }
   if (errors.length > 0) {
     errorMsg.value = `${added} ${t("addMcp.toast.partial", { added, failed: errors.length })}: ${errors.join("; ")}`;
   }
 
   submitting.value = false;
+}
+
+/** 统一提交入口 */
+function submitForm() {
+  if (inputMode.value === "url") {
+    submitUrl();
+  } else {
+    submitJson();
+  }
 }
 </script>
 
@@ -139,12 +217,25 @@ async function submitJson() {
       <p class="form-subtitle">{{ t("addMcp.subtitle") }}</p>
     </div>
 
+    <!-- 模式切换 -->
+    <div class="mode-switch">
+      <button
+        :class="['mode-btn', { active: inputMode === 'json' }]"
+        @click="inputMode = 'json'"
+      >{{ t("addMcp.inputMode.json") }}</button>
+      <button
+        :class="['mode-btn', { active: inputMode === 'url' }]"
+        @click="inputMode = 'url'"
+      >{{ t("addMcp.inputMode.url") }}</button>
+    </div>
+
     <div v-if="errorMsg" class="error-card">
       <span class="error-bar"></span>
       <span>{{ errorMsg }}</span>
     </div>
 
-    <div class="form-group">
+    <!-- JSON 模式 -->
+    <div v-if="inputMode === 'json'" class="form-group">
       <label for="mcp-json">{{ t("addMcp.label") }}</label>
       <div class="editor-wrapper">
         <textarea
@@ -157,8 +248,51 @@ async function submitJson() {
       </div>
     </div>
 
+    <!-- URL 模式 -->
+    <div v-if="inputMode === 'url'" class="url-form">
+      <div class="form-group">
+        <label for="mcp-url">{{ t("addMcp.urlLabel") }}</label>
+        <div class="editor-wrapper">
+          <input
+            id="mcp-url"
+            v-model="urlInput"
+            type="url"
+            :placeholder="t('addMcp.urlPlaceholder')"
+            class="url-input"
+            @input="onUrlInput"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="mcp-url-name">{{ t("addMcp.urlNamePlaceholder") }}</label>
+        <div class="editor-wrapper">
+          <input
+            id="mcp-url-name"
+            v-model="urlNameInput"
+            type="text"
+            :placeholder="t('addMcp.urlNamePlaceholder')"
+            class="url-input"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="mcp-url-desc">{{ t("addMcp.urlDescriptionPlaceholder") }}</label>
+        <div class="editor-wrapper">
+          <input
+            id="mcp-url-desc"
+            v-model="urlDescInput"
+            type="text"
+            :placeholder="t('addMcp.urlDescriptionPlaceholder')"
+            class="url-input"
+          />
+        </div>
+      </div>
+    </div>
+
     <div class="form-actions">
-      <button class="submit-btn" @click="submitJson" :disabled="submitting">
+      <button class="submit-btn" @click="submitForm" :disabled="submitting">
         <span class="submit-btn-content">
           <span v-if="!submitting">{{ t("addMcp.submit") }}</span>
           <span v-else><span class="spinner"></span>{{ t("addMcp.submitting") }}</span>
@@ -190,6 +324,36 @@ async function submitJson() {
   margin: 0;
   font-size: 13px;
   color: var(--mc-text-muted);
+}
+
+/* 模式切换 */
+.mode-switch {
+  display: flex;
+  gap: 0;
+  margin-bottom: 20px;
+  background: var(--mc-bg-button);
+  border-radius: var(--mc-radius-md);
+  padding: 3px;
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--mc-text-muted);
+  background: none;
+  border: none;
+  border-radius: calc(var(--mc-radius-md) - 2px);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.mode-btn.active {
+  background: var(--mc-bg-card);
+  color: var(--mc-text-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 /* 错误卡片 */
@@ -260,6 +424,27 @@ async function submitJson() {
 }
 
 .form-group textarea::placeholder {
+  color: var(--mc-text-dim);
+}
+
+/* URL 输入框 */
+.url-form {
+  margin-bottom: 0;
+}
+
+.url-input {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-family: var(--mc-font-mono);
+  background: var(--mc-bg-input);
+  color: var(--mc-text-primary);
+  border: none;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.url-input::placeholder {
   color: var(--mc-text-dim);
 }
 

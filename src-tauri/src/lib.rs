@@ -113,6 +113,7 @@ pub fn run() {
             commands::set_bind_address,
             commands::get_local_ips,
             commands::open_data_dir,
+            commands::get_platform,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

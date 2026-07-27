@@ -226,3 +226,9 @@ pub async fn get_local_ips() -> Result<Vec<String>, String> {
     Ok(Vec::new())
 }
 
+/// 获取当前平台类型，用于前端 UI 适配
+#[tauri::command]
+pub fn get_platform() -> String {
+    std::env::consts::OS.to_string()
+}
+

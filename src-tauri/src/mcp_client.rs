@@ -76,7 +76,7 @@ async fn discover_http(url: &str) -> Result<Vec<McpTool>, String> {
 
     let client_info = ClientInfo::new(
         ClientCapabilities::default(),
-        Implementation::new("McpStudio", "0.1.3"),
+        Implementation::new("McpStudio", "0.1.4"),
     );
 
     let client = client_info
@@ -207,7 +207,7 @@ async fn call_tool_http(
     let transport = StreamableHttpClientTransport::from_uri(url);
     let client_info = ClientInfo::new(
         ClientCapabilities::default(),
-        Implementation::new("McpStudio", "0.1.3"),
+        Implementation::new("McpStudio", "0.1.4"),
     );
     let client = client_info
         .serve(transport)
