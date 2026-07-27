@@ -3,6 +3,7 @@ import { ref, onMounted, provide } from "vue";
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { provideI18n } from "./i18n";
+import { initTheme, useTheme } from "./themes";
 import McpList from "./components/McpList.vue";
 import McpDetail from "./components/McpDetail.vue";
 import AddMcpForm from "./components/AddMcpForm.vue";
@@ -16,6 +17,12 @@ const { t, currentLocale, setLocale } = provideI18n();
 /** 向子组件提供语言切换能力 */
 provide("setLocale", setLocale);
 provide("currentLocale", currentLocale);
+
+/** 初始化主题系统 */
+const { currentThemeName, setTheme, getThemes } = useTheme();
+provide("setTheme", setTheme);
+provide("currentThemeName", currentThemeName);
+provide("getThemes", getThemes);
 
 /** 连接配置 */
 interface ConnectionConfig {
@@ -76,21 +83,39 @@ const isMaximized = ref(false);
 
 /** 窗口操作函数 */
 async function minimizeWindow() {
-  await appWindow.minimize();
+  try {
+    await appWindow.minimize();
+  } catch (e) {
+    console.error("minimizeWindow:", e);
+  }
 }
 
 async function toggleMaximize() {
-  await appWindow.toggleMaximize();
-  isMaximized.value = await appWindow.isMaximized();
+  try {
+    await appWindow.toggleMaximize();
+    // 等待窗口动画完成后再获取状态
+    await new Promise((r) => setTimeout(r, 150));
+    isMaximized.value = await appWindow.isMaximized();
+  } catch (e) {
+    console.error("toggleMaximize:", e);
+  }
 }
 
 async function closeWindow() {
-  await appWindow.close();
+  try {
+    await appWindow.close();
+  } catch (e) {
+    console.error("closeWindow:", e);
+  }
 }
 
 /** 更新窗口最大化状态 */
 async function updateMaximizedState() {
-  isMaximized.value = await appWindow.isMaximized();
+  try {
+    isMaximized.value = await appWindow.isMaximized();
+  } catch (e) {
+    console.error("updateMaximizedState:", e);
+  }
 }
 
 /** 服务器状态（侧边栏展示用） */
@@ -98,6 +123,8 @@ const serverPort = ref(9277);
 const localIps = ref<string[]>([]);
 
 onMounted(async () => {
+  // 初始化主题
+  initTheme();
   await updateMaximizedState();
   appWindow.onResized(() => {
     updateMaximizedState();
@@ -268,11 +295,11 @@ body,
 body {
   font-family: Inter, -apple-system, sans-serif;
   font-size: 14px;
-  color: #e6edf3;
-  background: #0d1117;
+  color: var(--mc-text-primary);
+  background: var(--mc-bg-primary);
 }
 
-/* 全局滚动条 - GitHub Dark 风格 */
+/* 全局滚动条 */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -283,12 +310,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #30363d;
+  background: var(--mc-scrollbar-thumb);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #484f58;
+  background: var(--mc-scrollbar-thumb-hover);
 }
 
 ::-webkit-scrollbar-corner {
@@ -302,7 +329,7 @@ body {
   flex-direction: column;
   height: 100vh;
   width: 100vw;
-  border: 1px solid #30363d;
+  border: 1px solid var(--mc-window-border);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -314,8 +341,8 @@ body {
   justify-content: space-between;
   height: 36px;
   flex-shrink: 0;
-  background: #161b22;
-  border-bottom: 1px solid #30363d;
+  background: var(--mc-titlebar-bg);
+  border-bottom: 1px solid var(--mc-titlebar-border);
   padding: 0 12px;
   user-select: none;
   cursor: default;
@@ -324,7 +351,7 @@ body {
 .titlebar-title {
   font-size: 13px;
   font-weight: 600;
-  color: #8b949e;
+  color: var(--mc-titlebar-text);
   padding-left: 8px;
 }
 
@@ -342,22 +369,21 @@ body {
   background: none;
   border: none;
   cursor: pointer;
-  color: #8b949e;
+  color: var(--mc-titlebar-text);
   transition: background 0.15s ease, color 0.15s ease;
 }
 
-/* 按钮内的图标不响应鼠标事件，由按钮处理 */
 .titlebar-btn .ctrl-icon {
   pointer-events: none;
 }
 
 .titlebar-btn:hover {
-  background: #30363d;
-  color: #e6edf3;
+  background: var(--mc-titlebar-btn-hover);
+  color: var(--mc-text-primary);
 }
 
 .titlebar-close:hover {
-  background: #e81123;
+  background: var(--mc-close-btn-hover);
   color: #ffffff;
 }
 
@@ -397,7 +423,7 @@ body {
   height: 8px;
   border: 1.5px solid currentColor;
   border-radius: 1px;
-  background: #161b22;
+  background: var(--mc-titlebar-bg);
 }
 
 .ctrl-close {
@@ -447,24 +473,24 @@ body {
   border-radius: 8px;
   font-size: 13px;
   font-weight: 500;
-  color: #e6edf3;
+  color: var(--mc-text-primary);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
   pointer-events: none;
 }
 
 .toast-success {
-  background: #1a3a2a;
-  border: 1px solid #3fb950;
+  background: var(--mc-toast-success-bg);
+  border: 1px solid var(--mc-accent-green);
 }
 
 .toast-error {
-  background: #3a1a1a;
-  border: 1px solid #f85149;
+  background: var(--mc-toast-error-bg);
+  border: 1px solid var(--mc-accent-red);
 }
 
 .toast-info {
-  background: #1a2a3a;
-  border: 1px solid #58a6ff;
+  background: var(--mc-toast-info-bg);
+  border: 1px solid var(--mc-accent-blue);
 }
 
 .toast-icon {
@@ -473,15 +499,15 @@ body {
 }
 
 .toast-success .toast-icon {
-  color: #3fb950;
+  color: var(--mc-accent-green);
 }
 
 .toast-error .toast-icon {
-  color: #f85149;
+  color: var(--mc-accent-red);
 }
 
 .toast-info .toast-icon {
-  color: #58a6ff;
+  color: var(--mc-accent-blue);
 }
 
 /* Toast 动画 */
@@ -519,8 +545,8 @@ body {
 .sidebar {
   width: 260px;
   flex-shrink: 0;
-  background: #161b22;
-  border-right: 1px solid #30363d;
+  background: var(--mc-sidebar-bg);
+  border-right: 1px solid var(--mc-sidebar-border);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -528,13 +554,13 @@ body {
 
 .sidebar-title {
   padding: 20px 16px 16px;
-  border-bottom: 1px solid #30363d;
+  border-bottom: 1px solid var(--mc-sidebar-border);
 }
 
 .sidebar-title h2 {
   font-size: 18px;
   font-weight: 700;
-  background: linear-gradient(135deg, #58a6ff, #a371f7);
+  background: var(--mc-sidebar-title-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -548,14 +574,14 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: #0d1117;
+  background: var(--mc-main-bg);
 }
 
 /* ===== 标签页导航 ===== */
 .tab-bar {
   display: flex;
-  background: #0d1117;
-  border-bottom: 1px solid #30363d;
+  background: var(--mc-tab-bar-bg);
+  border-bottom: 1px solid var(--mc-tab-border);
   padding: 0 20px;
   gap: 4px;
   flex-shrink: 0;
@@ -565,7 +591,7 @@ body {
   padding: 12px 18px;
   font-size: 13px;
   font-weight: 500;
-  color: #8b949e;
+  color: var(--mc-text-muted);
   background: none;
   border: none;
   border-bottom: 2px solid transparent;
@@ -576,12 +602,12 @@ body {
 }
 
 .tab-btn:hover {
-  color: #e6edf3;
+  color: var(--mc-text-primary);
 }
 
 .tab-btn.active {
-  color: #e6edf3;
-  border-bottom-color: #58a6ff;
+  color: var(--mc-text-primary);
+  border-bottom-color: var(--mc-tab-active-border);
 }
 
 /* ===== 标签页内容 ===== */
@@ -597,11 +623,11 @@ body {
   align-items: center;
   gap: 6px;
   padding: 8px 16px;
-  border-top: 1px solid #30363d;
-  background: #0d1117;
+  border-top: 1px solid var(--mc-status-bar-border);
+  background: var(--mc-status-bar-bg);
   font-size: 11px;
   font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
-  color: #8b949e;
+  color: var(--mc-status-bar-text);
   flex-shrink: 0;
 }
 
@@ -609,7 +635,7 @@ body {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #3fb950;
+  background: var(--mc-accent-green);
   flex-shrink: 0;
   animation: pulse-dot 2s ease-in-out infinite;
 }
@@ -624,11 +650,11 @@ body {
 }
 
 .status-port {
-  color: #58a6ff;
+  color: var(--mc-accent-blue);
 }
 
 .status-lan-ip {
-  color: #6e7681;
+  color: var(--mc-text-dim);
   margin-left: auto;
   overflow: hidden;
   text-overflow: ellipsis;

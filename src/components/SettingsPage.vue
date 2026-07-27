@@ -2,6 +2,7 @@
 import { ref, onMounted, inject } from "vue";
 import { invoke } from "@tauri-apps/api/core";
 import { useI18n, supportedLocales } from "../i18n";
+import type { Theme } from "../themes";
 
 const { t } = useI18n();
 
@@ -12,11 +13,24 @@ const showToast = inject<(text: string, type?: "success" | "error" | "info") => 
 const setLocale = inject<(locale: string) => void>("setLocale", () => {});
 const currentLocale = inject<{ value: string }>("currentLocale", { value: "zh-CN" });
 
+/** 从 App.vue 注入的主题相关函数 */
+const setTheme = inject<(name: string) => void>("setTheme", () => {});
+const currentThemeName = inject<{ value: string }>("currentThemeName", { value: "dark" });
+const getThemes = inject<() => Theme[]>("getThemes", () => []);
+
 /** 切换语言 */
 function switchLanguage(locale: string) {
   setLocale(locale);
   const langLabel = supportedLocales.find((l) => l.key === locale)?.label ?? locale;
   showToast(t("settings.toast.langChanged", { lang: langLabel }), "success");
+}
+
+/** 切换主题 */
+function switchTheme(name: string) {
+  setTheme(name);
+  const themes = getThemes();
+  const themeLabel = themes.find((th) => th.name === name)?.label ?? name;
+  showToast(t("settings.toast.themeChanged", { theme: themeLabel }), "success");
 }
 
 /** 打开存储目录 */
@@ -91,6 +105,27 @@ async function saveServerConfig() {
             >
               <span class="lang-code">{{ locale.key === 'zh-CN' ? '中' : 'EN' }}</span>
               <span class="lang-name">{{ locale.label }}</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 主题设置 -->
+      <section class="setting-section">
+        <div class="section-header">
+          <h3 class="section-title">{{ t("settings.theme.title") }}</h3>
+          <p class="section-desc">{{ t("settings.theme.description") }}</p>
+        </div>
+        <div class="theme-options">
+          <div class="theme-toggle">
+            <button
+              v-for="theme in getThemes()"
+              :key="theme.name"
+              :class="['theme-option', { active: currentThemeName.value === theme.name }]"
+              @click="switchTheme(theme.name)"
+            >
+              <span :class="['theme-swatch', theme.name]"></span>
+              <span class="theme-name">{{ theme.label }}</span>
             </button>
           </div>
         </div>
@@ -192,7 +227,7 @@ async function saveServerConfig() {
 .page-title {
   font-size: 20px;
   font-weight: 700;
-  color: #e6edf3;
+  color: var(--mc-text-primary);
   margin: 0;
 }
 
@@ -203,8 +238,8 @@ async function saveServerConfig() {
 }
 
 .setting-section {
-  background: #161b22;
-  border: 1px solid #30363d;
+  background: var(--mc-bg-card);
+  border: 1px solid var(--mc-border-primary);
   border-radius: 10px;
   padding: 20px 22px;
 }
@@ -216,26 +251,26 @@ async function saveServerConfig() {
 .section-title {
   font-size: 14px;
   font-weight: 600;
-  color: #e6edf3;
+  color: var(--mc-text-primary);
   margin: 0 0 4px;
 }
 
 .section-desc {
   font-size: 12px;
-  color: #8b949e;
+  color: var(--mc-text-muted);
   margin: 0;
   line-height: 1.5;
 }
 
-/* 语言选项 - 切换开关样式 */
+/* 语言选项 */
 .lang-options {
   display: flex;
 }
 
 .lang-toggle {
   display: flex;
-  background: #0d1117;
-  border: 1px solid #30363d;
+  background: var(--mc-lang-toggle-bg);
+  border: 1px solid var(--mc-lang-toggle-border);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -247,7 +282,7 @@ async function saveServerConfig() {
   padding: 8px 18px;
   font-size: 13px;
   font-weight: 500;
-  color: #8b949e;
+  color: var(--mc-text-muted);
   background: transparent;
   border: none;
   cursor: pointer;
@@ -256,13 +291,13 @@ async function saveServerConfig() {
 }
 
 .lang-option:hover {
-  color: #e6edf3;
-  background: #1a2233;
+  color: var(--mc-text-primary);
+  background: var(--mc-bg-card-hover);
 }
 
 .lang-option.active {
-  color: #ffffff;
-  background: #1f6feb;
+  color: var(--mc-lang-active-text);
+  background: var(--mc-lang-active-bg);
 }
 
 .lang-code {
@@ -286,6 +321,68 @@ async function saveServerConfig() {
   white-space: nowrap;
 }
 
+/* 主题选项 */
+.theme-options {
+  display: flex;
+}
+
+.theme-toggle {
+  display: flex;
+  background: var(--mc-lang-toggle-bg);
+  border: 1px solid var(--mc-lang-toggle-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.theme-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--mc-text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.theme-option:hover {
+  color: var(--mc-text-primary);
+  background: var(--mc-bg-card-hover);
+}
+
+.theme-option.active {
+  color: var(--mc-lang-active-text);
+  background: var(--mc-lang-active-bg);
+}
+
+.theme-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--mc-border-primary);
+  flex-shrink: 0;
+}
+
+.theme-swatch.dark {
+  background: #0d1117;
+}
+
+.theme-swatch.light {
+  background: #ffffff;
+}
+
+.theme-option.active .theme-swatch {
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.theme-name {
+  white-space: nowrap;
+}
+
 /* 存储 */
 .storage-info {
   display: flex;
@@ -301,18 +398,18 @@ async function saveServerConfig() {
 }
 
 .storage-label {
-  color: #8b949e;
+  color: var(--mc-text-muted);
   flex-shrink: 0;
 }
 
 .storage-value {
   font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
   font-size: 12px;
-  color: #58a6ff;
-  background: #0d1117;
+  color: var(--mc-accent-blue);
+  background: var(--mc-bg-input);
   padding: 4px 8px;
   border-radius: 4px;
-  border: 1px solid #30363d;
+  border: 1px solid var(--mc-border-primary);
 }
 
 .open-dir-btn {
@@ -322,9 +419,9 @@ async function saveServerConfig() {
   padding: 8px 16px;
   font-size: 13px;
   font-weight: 500;
-  color: #e6edf3;
-  background: #21262d;
-  border: 1px solid #30363d;
+  color: var(--mc-text-primary);
+  background: var(--mc-bg-button);
+  border: 1px solid var(--mc-border-primary);
   border-radius: 6px;
   cursor: pointer;
   font-family: inherit;
@@ -333,11 +430,10 @@ async function saveServerConfig() {
 }
 
 .open-dir-btn:hover {
-  background: #30363d;
-  border-color: #58a6ff;
+  background: var(--mc-bg-button-hover);
+  border-color: var(--mc-accent-blue);
 }
 
-/* 文件夹图标 - CSS 绘制 */
 .folder-icon {
   display: inline-flex;
   align-items: center;
@@ -351,7 +447,7 @@ async function saveServerConfig() {
   display: block;
   width: 16px;
   height: 12px;
-  background: #58a6ff;
+  background: var(--mc-accent-blue);
   border-radius: 2px;
   position: relative;
 }
@@ -363,7 +459,7 @@ async function saveServerConfig() {
   left: 0;
   width: 8px;
   height: 3px;
-  background: #58a6ff;
+  background: var(--mc-accent-blue);
   border-radius: 2px 2px 0 0;
 }
 
@@ -382,18 +478,18 @@ async function saveServerConfig() {
 }
 
 .about-label {
-  color: #8b949e;
+  color: var(--mc-text-muted);
   min-width: 48px;
 }
 
 .about-value {
-  color: #e6edf3;
+  color: var(--mc-text-primary);
   font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
   font-size: 12px;
-  background: #0d1117;
+  background: var(--mc-bg-input);
   padding: 2px 8px;
   border-radius: 4px;
-  border: 1px solid #30363d;
+  border: 1px solid var(--mc-border-primary);
 }
 
 /* 服务器设置 */
@@ -415,7 +511,7 @@ async function saveServerConfig() {
 .server-row .form-group label {
   display: block;
   font-size: 12px;
-  color: #8b949e;
+  color: var(--mc-text-muted);
   margin-bottom: 6px;
   font-weight: 500;
 }
@@ -425,9 +521,9 @@ async function saveServerConfig() {
   width: 100%;
   padding: 8px 12px;
   font-size: 13px;
-  background: #0d1117;
-  color: #e6edf3;
-  border: 1px solid #30363d;
+  background: var(--mc-bg-input);
+  color: var(--mc-text-primary);
+  border: 1px solid var(--mc-input-border);
   border-radius: 6px;
   outline: none;
   font-family: inherit;
@@ -435,7 +531,6 @@ async function saveServerConfig() {
   transition: border-color 0.2s ease;
 }
 
-/* 隐藏数字输入框的增减箭头 */
 .server-row .form-group input[type="number"]::-webkit-inner-spin-button,
 .server-row .form-group input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -448,7 +543,7 @@ async function saveServerConfig() {
 
 .server-row .form-group input:focus,
 .server-row .form-group select:focus {
-  border-color: #58a6ff;
+  border-color: var(--mc-input-focus-border);
 }
 
 .server-row .form-group select {
@@ -474,7 +569,7 @@ async function saveServerConfig() {
 }
 
 .url-label {
-  color: #8b949e;
+  color: var(--mc-text-muted);
   flex-shrink: 0;
   min-width: 72px;
 }
@@ -482,17 +577,17 @@ async function saveServerConfig() {
 .url-item code {
   font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
   font-size: 12px;
-  color: #58a6ff;
-  background: #0d1117;
+  color: var(--mc-accent-blue);
+  background: var(--mc-bg-input);
   padding: 4px 8px;
   border-radius: 4px;
-  border: 1px solid #30363d;
+  border: 1px solid var(--mc-border-primary);
   word-break: break-all;
 }
 
 .server-hint {
   font-size: 12px;
-  color: #6e7681;
+  color: var(--mc-text-dim);
   font-style: italic;
 }
 
@@ -503,8 +598,8 @@ async function saveServerConfig() {
   padding: 8px 20px;
   font-size: 13px;
   font-weight: 500;
-  color: #ffffff;
-  background: linear-gradient(135deg, #1f6feb, #58a6ff);
+  color: var(--mc-text-white);
+  background: var(--mc-btn-gradient);
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -513,7 +608,7 @@ async function saveServerConfig() {
 }
 
 .save-btn:hover {
-  box-shadow: 0 0 12px rgba(88, 166, 255, 0.3);
+  box-shadow: var(--mc-shadow-btn);
 }
 
 .save-btn:active {

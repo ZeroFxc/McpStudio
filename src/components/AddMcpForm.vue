@@ -182,14 +182,14 @@ async function submitJson() {
   margin: 0 0 6px;
   font-size: 22px;
   font-weight: 700;
-  color: #e6edf3;
+  color: var(--mc-text-primary);
   letter-spacing: -0.3px;
 }
 
 .form-subtitle {
   margin: 0;
   font-size: 13px;
-  color: #8b949e;
+  color: var(--mc-text-muted);
 }
 
 /* 错误卡片 */
@@ -197,10 +197,10 @@ async function submitJson() {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  background: rgba(248, 81, 73, 0.08);
-  border: 1px solid rgba(248, 81, 73, 0.3);
-  border-left: 3px solid #f85149;
-  color: #f85149;
+  background: var(--mc-error-bg);
+  border: 1px solid var(--mc-error-border);
+  border-left: 3px solid var(--mc-accent-red);
+  color: var(--mc-accent-red);
   padding: 12px 14px;
   border-radius: 6px;
   margin-bottom: 20px;
@@ -211,7 +211,7 @@ async function submitJson() {
 .error-bar {
   width: 3px;
   height: 18px;
-  background: #f85149;
+  background: var(--mc-accent-red);
   border-radius: 2px;
   flex-shrink: 0;
   margin-top: 1px;
@@ -226,22 +226,22 @@ async function submitJson() {
   display: block;
   font-size: 12px;
   font-weight: 600;
-  color: #8b949e;
+  color: var(--mc-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 8px;
 }
 
 .editor-wrapper {
-  border: 1px solid #30363d;
+  border: 1px solid var(--mc-border-primary);
   border-radius: 8px;
   overflow: hidden;
   transition: border-color 0.2s ease;
-  background: #0d1117;
+  background: var(--mc-bg-input);
 }
 
 .editor-wrapper:focus-within {
-  border-color: #58a6ff;
+  border-color: var(--mc-accent-blue);
 }
 
 .form-group textarea {
@@ -249,8 +249,8 @@ async function submitJson() {
   padding: 14px 16px;
   font-size: 13px;
   font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-  background: #0d1117;
-  color: #e6edf3;
+  background: var(--mc-bg-input);
+  color: var(--mc-text-primary);
   border: none;
   outline: none;
   box-sizing: border-box;
@@ -260,14 +260,14 @@ async function submitJson() {
 }
 
 .form-group textarea::placeholder {
-  color: #484f58;
+  color: var(--mc-text-dim);
 }
 
 /* 提交按钮 */
 .form-actions {
   margin-top: 24px;
   padding-top: 20px;
-  border-top: 1px solid #30363d;
+  border-top: 1px solid var(--mc-border-primary);
 }
 
 .submit-btn {
@@ -275,8 +275,8 @@ async function submitJson() {
   padding: 12px 24px;
   font-size: 14px;
   font-weight: 600;
-  color: #fff;
-  background: linear-gradient(135deg, #1f6feb, #58a6ff);
+  color: var(--mc-text-white);
+  background: var(--mc-btn-gradient);
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -286,7 +286,7 @@ async function submitJson() {
 }
 
 .submit-btn:hover:not(:disabled) {
-  box-shadow: 0 0 20px rgba(88, 166, 255, 0.3);
+  box-shadow: var(--mc-shadow-btn);
   transform: translateY(-1px);
 }
 

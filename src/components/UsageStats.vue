@@ -31,10 +31,10 @@ function barWidth(count: number): string {
 /** 热度条颜色 */
 function barColor(count: number): string {
   const ratio = count / maxCount.value;
-  if (ratio > 0.8) return "#3fb950";
-  if (ratio > 0.5) return "#58a6ff";
-  if (ratio > 0.2) return "#d2991d";
-  return "#484f58";
+  if (ratio > 0.8) return "var(--mc-accent-green)";
+  if (ratio > 0.5) return "var(--mc-accent-blue)";
+  if (ratio > 0.2) return "var(--mc-accent-yellow)";
+  return "var(--mc-text-dim)";
 }
 
 /** 加载使用统计 */
@@ -163,13 +163,13 @@ onMounted(loadStats);
   margin: 0;
   font-size: 22px;
   font-weight: 700;
-  color: #e6edf3;
+  color: var(--mc-text-primary);
   letter-spacing: -0.3px;
 }
 
 .stats-count {
   font-size: 12px;
-  color: #8b949e;
+  color: var(--mc-text-muted);
   font-weight: 500;
 }
 
@@ -181,7 +181,7 @@ onMounted(loadStats);
 
 .limit-label {
   font-size: 12px;
-  color: #8b949e;
+  color: var(--mc-text-muted);
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -192,9 +192,9 @@ onMounted(loadStats);
   width: 64px;
   padding: 6px 10px;
   font-size: 12px;
-  background: #0d1117;
-  color: #e6edf3;
-  border: 1px solid #30363d;
+  background: var(--mc-bg-input);
+  color: var(--mc-text-primary);
+  border: 1px solid var(--mc-border-primary);
   border-radius: 6px;
   outline: none;
   font-family: inherit;
@@ -202,7 +202,7 @@ onMounted(loadStats);
 }
 
 .limit-input:focus {
-  border-color: #58a6ff;
+  border-color: var(--mc-accent-blue);
 }
 
 .query-btn {
@@ -212,9 +212,9 @@ onMounted(loadStats);
   padding: 6px 16px;
   font-size: 12px;
   font-weight: 500;
-  background: #21262d;
-  color: #e6edf3;
-  border: 1px solid #30363d;
+  background: var(--mc-bg-button);
+  color: var(--mc-text-primary);
+  border: 1px solid var(--mc-border-primary);
   border-radius: 6px;
   cursor: pointer;
   font-family: inherit;
@@ -222,8 +222,8 @@ onMounted(loadStats);
 }
 
 .query-btn:hover:not(:disabled) {
-  background: #30363d;
-  border-color: #58a6ff;
+  background: var(--mc-border-primary);
+  border-color: var(--mc-accent-blue);
 }
 
 .query-btn:disabled {
@@ -258,7 +258,7 @@ onMounted(loadStats);
   display: block;
   width: 6px;
   border-radius: 3px;
-  background: #8b949e;
+  background: var(--mc-text-muted);
 }
 .bar-icon i:nth-child(1) { height: 12px; }
 .bar-icon i:nth-child(2) { height: 22px; }
@@ -266,19 +266,19 @@ onMounted(loadStats);
 
 .empty-text {
   font-size: 16px;
-  color: #8b949e;
+  color: var(--mc-text-muted);
   font-weight: 500;
   margin-bottom: 6px;
 }
 
 .empty-hint {
   font-size: 13px;
-  color: #484f58;
+  color: var(--mc-text-dim);
 }
 
 /* 表格容器 */
 .table-container {
-  border: 1px solid #30363d;
+  border: 1px solid var(--mc-border-primary);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -299,13 +299,13 @@ onMounted(loadStats);
 .stats-table th {
   text-align: left;
   padding: 10px 16px;
-  background: #161b22;
-  color: #8b949e;
+  background: var(--mc-table-header-bg);
+  color: var(--mc-text-muted);
   font-weight: 600;
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  border-bottom: 1px solid #30363d;
+  border-bottom: 1px solid var(--mc-border-primary);
 }
 
 .col-mcp { width: 25%; }
@@ -315,8 +315,8 @@ onMounted(loadStats);
 
 .stats-table td {
   padding: 12px 16px;
-  border-bottom: 1px solid #21262d;
-  color: #c9d1d9;
+  border-bottom: 1px solid var(--mc-table-border);
+  color: var(--mc-text-secondary);
 }
 
 .stats-table tbody tr {
@@ -328,7 +328,7 @@ onMounted(loadStats);
 }
 
 .stats-table tbody tr:hover {
-  background: #161b22;
+  background: var(--mc-table-row-hover);
 }
 
 /* MCP 名称 */
@@ -336,7 +336,7 @@ onMounted(loadStats);
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #e6edf3;
+  color: var(--mc-text-primary);
   font-weight: 500;
 }
 
@@ -344,7 +344,7 @@ onMounted(loadStats);
 .mcp-box-icon {
   width: 12px;
   height: 12px;
-  border: 1.5px solid #8b949e;
+  border: 1.5px solid var(--mc-text-muted);
   border-radius: 2px;
   flex-shrink: 0;
   opacity: 0.7;
@@ -353,7 +353,7 @@ onMounted(loadStats);
 /* 工具名称 */
 .cell-tool {
   font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-  color: #58a6ff;
+  color: var(--mc-accent-blue);
   font-size: 12px;
 }
 
@@ -380,7 +380,7 @@ onMounted(loadStats);
 .count-value {
   font-size: 12px;
   font-weight: 600;
-  color: #e6edf3;
+  color: var(--mc-text-primary);
   white-space: nowrap;
   min-width: 24px;
   text-align: right;
@@ -388,7 +388,7 @@ onMounted(loadStats);
 
 /* 最近使用时间 */
 .cell-time {
-  color: #8b949e;
+  color: var(--mc-text-muted);
   font-size: 12px;
   white-space: nowrap;
   font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;

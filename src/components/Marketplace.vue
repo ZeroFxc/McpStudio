@@ -220,20 +220,20 @@ function openRepo(url: string) {
 .page-title {
   font-size: 20px;
   font-weight: 700;
-  color: #e6edf3;
+  color: var(--mc-text-primary);
   margin: 0 0 4px;
 }
 
 .page-subtitle {
   font-size: 13px;
-  color: #8b949e;
+  color: var(--mc-text-muted);
   margin: 0;
 }
 
 /* 搜索区域 */
 .search-area {
-  background: #161b22;
-  border: 1px solid #30363d;
+  background: var(--mc-bg-card);
+  border: 1px solid var(--mc-border-primary);
   border-radius: 10px;
   padding: 20px 22px;
   margin-bottom: 20px;
@@ -256,7 +256,7 @@ function openRepo(url: string) {
 
 .topic-label {
   font-size: 11px;
-  color: #8b949e;
+  color: var(--mc-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 500;
@@ -271,9 +271,9 @@ function openRepo(url: string) {
   padding: 5px 14px;
   font-size: 12px;
   font-weight: 500;
-  color: #8b949e;
-  background: #0d1117;
-  border: 1px solid #30363d;
+  color: var(--mc-text-muted);
+  background: var(--mc-chip-bg);
+  border: 1px solid var(--mc-border-primary);
   border-radius: 20px;
   cursor: pointer;
   font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
@@ -281,23 +281,23 @@ function openRepo(url: string) {
 }
 
 .topic-chip:hover {
-  color: #e6edf3;
-  border-color: #58a6ff;
+  color: var(--mc-text-primary);
+  border-color: var(--mc-accent-blue);
 }
 
 .topic-chip.active {
-  color: #58a6ff;
-  border-color: #58a6ff;
-  background: #1a2233;
+  color: var(--mc-chip-active-text);
+  border-color: var(--mc-accent-blue);
+  background: var(--mc-chip-active-bg);
 }
 
 .search-input {
   flex: 1;
   padding: 9px 14px;
   font-size: 13px;
-  background: #0d1117;
-  color: #e6edf3;
-  border: 1px solid #30363d;
+  background: var(--mc-chip-bg);
+  color: var(--mc-text-primary);
+  border: 1px solid var(--mc-border-primary);
   border-radius: 6px;
   outline: none;
   font-family: inherit;
@@ -305,19 +305,19 @@ function openRepo(url: string) {
 }
 
 .search-input:focus {
-  border-color: #58a6ff;
+  border-color: var(--mc-accent-blue);
 }
 
 .search-input::placeholder {
-  color: #484f58;
+  color: var(--mc-text-dim);
 }
 
 .search-btn {
   padding: 9px 18px;
   font-size: 13px;
   font-weight: 600;
-  color: #ffffff;
-  background: linear-gradient(135deg, #58a6ff, #3d8bdb);
+  color: var(--mc-text-white);
+  background: var(--mc-btn-gradient);
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -327,7 +327,7 @@ function openRepo(url: string) {
 }
 
 .search-btn:hover {
-  box-shadow: 0 0 12px rgba(88, 166, 255, 0.3);
+  box-shadow: var(--mc-shadow-btn);
 }
 
 .search-btn:disabled {
@@ -339,9 +339,9 @@ function openRepo(url: string) {
 .error-banner {
   padding: 10px 16px;
   font-size: 13px;
-  color: #f85149;
-  background: #3a1a1a;
-  border: 1px solid #f85149;
+  color: var(--mc-accent-red);
+  background: var(--mc-error-banner-bg);
+  border: 1px solid var(--mc-accent-red);
   border-radius: 6px;
   margin-bottom: 16px;
 }
@@ -353,15 +353,15 @@ function openRepo(url: string) {
   align-items: center;
   gap: 12px;
   padding: 48px 0;
-  color: #8b949e;
+  color: var(--mc-text-muted);
   font-size: 13px;
 }
 
 .loading-spinner {
   width: 28px;
   height: 28px;
-  border: 3px solid #30363d;
-  border-top-color: #58a6ff;
+  border: 3px solid var(--mc-border-primary);
+  border-top-color: var(--mc-accent-blue);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -393,13 +393,13 @@ function openRepo(url: string) {
   display: block;
   width: 32px;
   height: 32px;
-  border: 2px dashed #30363d;
+  border: 2px dashed var(--mc-border-primary);
   border-radius: 6px;
 }
 
 .empty-text {
   font-size: 13px;
-  color: #8b949e;
+  color: var(--mc-text-muted);
   margin: 0;
 }
 
@@ -411,7 +411,7 @@ function openRepo(url: string) {
 .results-header h3 {
   font-size: 14px;
   font-weight: 600;
-  color: #e6edf3;
+  color: var(--mc-text-primary);
   margin: 0;
 }
 
@@ -422,8 +422,8 @@ function openRepo(url: string) {
 }
 
 .repo-card {
-  background: #161b22;
-  border: 1px solid #30363d;
+  background: var(--mc-repo-card-bg);
+  border: 1px solid var(--mc-border-primary);
   border-radius: 8px;
   padding: 16px 18px;
   cursor: pointer;
@@ -431,7 +431,7 @@ function openRepo(url: string) {
 }
 
 .repo-card:hover {
-  border-color: #58a6ff;
+  border-color: var(--mc-accent-blue);
   transform: translateY(-1px);
 }
 
@@ -459,7 +459,7 @@ function openRepo(url: string) {
 .repo-name {
   font-size: 14px;
   font-weight: 600;
-  color: #58a6ff;
+  color: var(--mc-repo-name-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -470,7 +470,7 @@ function openRepo(url: string) {
   align-items: center;
   gap: 4px;
   font-size: 12px;
-  color: #e6edf3;
+  color: var(--mc-text-primary);
   flex-shrink: 0;
 }
 
@@ -479,13 +479,13 @@ function openRepo(url: string) {
   display: inline-block;
   width: 14px;
   height: 14px;
-  background: #d29922;
+  background: var(--mc-accent-yellow);
   clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
 }
 
 .repo-desc {
   font-size: 12px;
-  color: #8b949e;
+  color: var(--mc-text-muted);
   margin: 0 0 10px;
   line-height: 1.5;
   display: -webkit-box;
@@ -506,14 +506,14 @@ function openRepo(url: string) {
   align-items: center;
   gap: 4px;
   font-size: 11px;
-  color: #8b949e;
+  color: var(--mc-text-muted);
 }
 
 .lang-dot {
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #58a6ff;
+  background: var(--mc-accent-blue);
   flex-shrink: 0;
 }
 
@@ -526,8 +526,8 @@ function openRepo(url: string) {
 .repo-topic {
   font-size: 10px;
   padding: 2px 8px;
-  color: #58a6ff;
-  background: rgba(88, 166, 255, 0.1);
+  color: var(--mc-repo-topic-text);
+  background: var(--mc-repo-topic-bg);
   border-radius: 10px;
   font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
 }

@@ -165,14 +165,14 @@ defineExpose({ refresh: loadList });
   align-items: center;
   justify-content: space-between;
   padding: 14px 16px 12px;
-  border-bottom: 1px solid #30363d;
+  border-bottom: 1px solid var(--mc-border-primary);
 }
 
 .list-header h3 {
   margin: 0;
   font-size: 13px;
   font-weight: 600;
-  color: #e6edf3;
+  color: var(--mc-text-primary);
 }
 
 .refresh-btn {
@@ -182,9 +182,9 @@ defineExpose({ refresh: loadList });
   padding: 4px 12px;
   font-size: 11px;
   font-weight: 500;
-  background: #21262d;
-  color: #8b949e;
-  border: 1px solid #30363d;
+  background: var(--mc-bg-button);
+  color: var(--mc-text-muted);
+  border: 1px solid var(--mc-border-primary);
   border-radius: 6px;
   cursor: pointer;
   font-family: inherit;
@@ -192,8 +192,8 @@ defineExpose({ refresh: loadList });
 }
 
 .refresh-btn:hover {
-  background: #30363d;
-  color: #e6edf3;
+  background: var(--mc-border-primary);
+  color: var(--mc-text-primary);
 }
 
 .refresh-btn:disabled {
@@ -218,7 +218,7 @@ defineExpose({ refresh: loadList });
 .empty-box {
   width: 48px;
   height: 48px;
-  border: 2px dashed #484f58;
+  border: 2px dashed var(--mc-text-dim);
   border-radius: 8px;
   opacity: 0.5;
   margin-bottom: 12px;
@@ -226,14 +226,14 @@ defineExpose({ refresh: loadList });
 
 .empty-text {
   font-size: 14px;
-  color: #8b949e;
+  color: var(--mc-text-muted);
   font-weight: 500;
   margin-bottom: 4px;
 }
 
 .empty-hint {
   font-size: 12px;
-  color: #484f58;
+  color: var(--mc-text-dim);
 }
 
 /* 列表 */
@@ -249,23 +249,23 @@ defineExpose({ refresh: loadList });
   padding: 10px 12px;
   margin: 4px 0;
   cursor: pointer;
-  background: #161b22;
+  background: var(--mc-bg-card);
   border: 1px solid transparent;
   border-radius: 8px;
   transition: all 0.2s ease;
 }
 
 .list-item:hover {
-  background: #1c2333;
-  border-color: #30363d;
+  background: var(--mc-bg-card-hover);
+  border-color: var(--mc-border-primary);
   transform: translateY(-1px);
 }
 
 .list-item.selected {
-  background: #1c2333;
-  border-left: 3px solid #58a6ff;
-  border-color: #30363d;
-  border-left-color: #58a6ff;
+  background: var(--mc-bg-card-hover);
+  border-left: 3px solid var(--mc-accent-blue);
+  border-color: var(--mc-border-primary);
+  border-left-color: var(--mc-accent-blue);
 }
 
 .item-main {
@@ -292,7 +292,7 @@ defineExpose({ refresh: loadList });
   display: block;
   height: 2px;
   border-radius: 1px;
-  background: #8b949e;
+  background: var(--mc-text-muted);
 }
 
 .box-icon::before {
@@ -308,13 +308,13 @@ defineExpose({ refresh: loadList });
 .list-item:hover .box-icon::after,
 .list-item.selected .box-icon::before,
 .list-item.selected .box-icon::after {
-  background: #58a6ff;
+  background: var(--mc-accent-blue);
 }
 
 .item-name {
   font-size: 13px;
   font-weight: 500;
-  color: #e6edf3;
+  color: var(--mc-text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -329,12 +329,12 @@ defineExpose({ refresh: loadList });
 }
 
 .status-dot.connected {
-  background: #3fb950;
-  box-shadow: 0 0 6px rgba(63, 185, 80, 0.5);
+  background: var(--mc-accent-green);
+  box-shadow: var(--mc-status-dot-glow);
 }
 
 .status-dot.disconnected {
-  background: #484f58;
+  background: var(--mc-text-dim);
 }
 
 .item-meta {
@@ -347,8 +347,8 @@ defineExpose({ refresh: loadList });
 }
 
 .tool-count {
-  background: #21262d;
-  color: #8b949e;
+  background: var(--mc-bg-button);
+  color: var(--mc-text-muted);
   padding: 1px 8px;
   border-radius: 10px;
   font-size: 10px;
@@ -356,12 +356,12 @@ defineExpose({ refresh: loadList });
 }
 
 .conn-text.connected {
-  color: #3fb950;
+  color: var(--mc-accent-green);
   font-weight: 500;
 }
 
 .conn-text.disconnected {
-  color: #8b949e;
+  color: var(--mc-text-muted);
 }
 
 .item-actions {
@@ -386,24 +386,24 @@ defineExpose({ refresh: loadList });
 }
 
 .connect-btn {
-  background: rgba(63, 185, 80, 0.1);
-  color: #3fb950;
-  border-color: rgba(63, 185, 80, 0.3);
+  background: var(--mc-btn-connect-bg);
+  color: var(--mc-accent-green);
+  border-color: color-mix(in srgb, var(--mc-accent-green) 30%, transparent);
 }
 
 .connect-btn:hover:not(:disabled) {
-  background: rgba(63, 185, 80, 0.2);
-  border-color: rgba(63, 185, 80, 0.5);
+  background: var(--mc-btn-connect-hover);
+  border-color: color-mix(in srgb, var(--mc-accent-green) 50%, transparent);
 }
 
 .disconnect-btn {
-  background: rgba(248, 81, 73, 0.1);
-  color: #f85149;
-  border-color: rgba(248, 81, 73, 0.3);
+  background: var(--mc-btn-delete-bg);
+  color: var(--mc-accent-red);
+  border-color: color-mix(in srgb, var(--mc-accent-red) 30%, transparent);
 }
 
 .disconnect-btn:hover:not(:disabled) {
-  background: rgba(248, 81, 73, 0.2);
-  border-color: rgba(248, 81, 73, 0.5);
+  background: var(--mc-btn-delete-hover);
+  border-color: color-mix(in srgb, var(--mc-accent-red) 50%, transparent);
 }
 </style>

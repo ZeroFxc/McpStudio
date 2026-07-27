@@ -120,6 +120,12 @@ const zhCN = {
       zhCN: "中文",
       enUS: "English",
     },
+    theme: {
+      title: "主题",
+      description: "选择界面配色方案",
+      dark: "暗色",
+      light: "亮色",
+    },
     server: {
       title: "HTTP 服务器",
       description: "修改设置后需重启应用生效",
@@ -144,6 +150,7 @@ const zhCN = {
     },
     toast: {
       langChanged: "语言已切换为 {lang}",
+      themeChanged: "主题已切换为 {theme}",
       dirOpened: "存储目录已打开",
       serverSaved: "服务器配置已保存",
     },

@@ -313,7 +313,7 @@ watch(() => props.entry, () => {
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: #8b949e;
+  color: var(--mc-text-muted);
   font-size: 15px;
   gap: 12px;
 }
@@ -322,7 +322,7 @@ watch(() => props.entry, () => {
 .doc-icon {
   width: 32px;
   height: 40px;
-  border: 2px solid #8b949e;
+  border: 2px solid var(--mc-text-muted);
   border-radius: 3px;
   position: relative;
   opacity: 0.4;
@@ -333,8 +333,8 @@ watch(() => props.entry, () => {
   left: 6px;
   right: 6px;
   height: 2px;
-  background: #8b949e;
-  box-shadow: 0 8px 0 #8b949e, 0 16px 0 #8b949e;
+  background: var(--mc-text-muted);
+  box-shadow: 0 8px 0 var(--mc-text-muted), 0 16px 0 var(--mc-text-muted);
 }
 
 /* 详情内容 */
@@ -364,7 +364,7 @@ watch(() => props.entry, () => {
   margin: 0;
   font-size: 26px;
   font-weight: 700;
-  color: #e6edf3;
+  color: var(--mc-text-primary);
   letter-spacing: -0.5px;
 }
 
@@ -379,15 +379,15 @@ watch(() => props.entry, () => {
 }
 
 .hero-badge.connected {
-  background: rgba(63, 185, 80, 0.12);
-  color: #3fb950;
-  border: 1px solid rgba(63, 185, 80, 0.3);
+  background: var(--mc-hero-badge-connected-bg);
+  color: var(--mc-accent-green);
+  border: 1px solid var(--mc-hero-badge-connected-border);
 }
 
 .hero-badge.disconnected {
-  background: rgba(139, 148, 158, 0.12);
-  color: #8b949e;
-  border: 1px solid rgba(139, 148, 158, 0.3);
+  background: var(--mc-hero-badge-disconnected-bg);
+  color: var(--mc-text-muted);
+  border: 1px solid var(--mc-hero-badge-disconnected-border);
 }
 
 .badge-dot {
@@ -419,36 +419,36 @@ watch(() => props.entry, () => {
 }
 
 .btn-connect {
-  background: rgba(63, 185, 80, 0.1);
-  color: #3fb950;
-  border-color: rgba(63, 185, 80, 0.3);
+  background: var(--mc-btn-connect-bg);
+  color: var(--mc-accent-green);
+  border-color: var(--mc-hero-badge-connected-border);
 }
 
 .btn-connect:hover:not(:disabled) {
-  background: rgba(63, 185, 80, 0.2);
-  border-color: rgba(63, 185, 80, 0.5);
+  background: var(--mc-btn-connect-hover);
+  border-color: color-mix(in srgb, var(--mc-accent-green) 50%, transparent);
 }
 
 .btn-disconnect {
-  background: rgba(210, 153, 29, 0.1);
-  color: #d2991d;
-  border-color: rgba(210, 153, 29, 0.3);
+  background: var(--mc-btn-disconnect-bg);
+  color: var(--mc-accent-yellow);
+  border-color: color-mix(in srgb, var(--mc-accent-yellow) 30%, transparent);
 }
 
 .btn-disconnect:hover:not(:disabled) {
-  background: rgba(210, 153, 29, 0.2);
-  border-color: rgba(210, 153, 29, 0.5);
+  background: var(--mc-btn-disconnect-hover);
+  border-color: color-mix(in srgb, var(--mc-accent-yellow) 50%, transparent);
 }
 
 .btn-delete {
-  background: rgba(248, 81, 73, 0.1);
-  color: #f85149;
-  border-color: rgba(248, 81, 73, 0.3);
+  background: var(--mc-btn-delete-bg);
+  color: var(--mc-accent-red);
+  border-color: color-mix(in srgb, var(--mc-accent-red) 30%, transparent);
 }
 
 .btn-delete:hover:not(:disabled) {
-  background: rgba(248, 81, 73, 0.2);
-  border-color: rgba(248, 81, 73, 0.5);
+  background: var(--mc-btn-delete-hover);
+  border-color: color-mix(in srgb, var(--mc-accent-red) 50%, transparent);
 }
 
 /* 信息卡片网格 */
@@ -460,15 +460,15 @@ watch(() => props.entry, () => {
 }
 
 .info-card {
-  background: #161b22;
-  border: 1px solid #30363d;
+  background: var(--mc-bg-card);
+  border: 1px solid var(--mc-border-primary);
   border-radius: 8px;
   padding: 14px;
   transition: border-color 0.2s ease;
 }
 
 .info-card:hover {
-  border-color: #484f58;
+  border-color: var(--mc-text-dim);
 }
 
 .card-icon {
@@ -479,7 +479,7 @@ watch(() => props.entry, () => {
 .desc-icon {
   width: 20px;
   height: 16px;
-  border: 2px solid #8b949e;
+  border: 2px solid var(--mc-text-muted);
   border-radius: 2px;
   position: relative;
 }
@@ -490,7 +490,7 @@ watch(() => props.entry, () => {
   left: -2px;
   width: 8px;
   height: 8px;
-  background: #0d1117;
+  background: var(--mc-desc-icon-bg);
   transform: rotate(45deg);
   transform-origin: bottom left;
 }
@@ -499,7 +499,7 @@ watch(() => props.entry, () => {
 .link-icon {
   width: 18px;
   height: 10px;
-  border: 2px solid #8b949e;
+  border: 2px solid var(--mc-text-muted);
   border-radius: 10px 10px 0 0;
   border-bottom: none;
   position: relative;
@@ -511,7 +511,7 @@ watch(() => props.entry, () => {
   top: 2px;
   width: 10px;
   height: 6px;
-  border: 2px solid #8b949e;
+  border: 2px solid var(--mc-text-muted);
   border-radius: 0 0 10px 10px;
   border-top: none;
 }
@@ -521,21 +521,21 @@ watch(() => props.entry, () => {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: #8b949e;
+  background: var(--mc-text-muted);
 }
 .status-dot-icon.connected {
-  background: #3fb950;
-  box-shadow: 0 0 6px rgba(63, 185, 80, 0.5);
+  background: var(--mc-accent-green);
+  box-shadow: var(--mc-status-dot-glow);
 }
 .status-dot-icon.disconnected {
-  background: #484f58;
+  background: var(--mc-text-dim);
 }
 
 /* 齿轮图标（替代 🔧） */
 .gear-icon {
   width: 20px;
   height: 20px;
-  border: 2px solid #8b949e;
+  border: 2px solid var(--mc-text-muted);
   border-radius: 50%;
   position: relative;
 }
@@ -546,14 +546,14 @@ watch(() => props.entry, () => {
   left: 50%;
   width: 6px;
   height: 6px;
-  background: #8b949e;
+  background: var(--mc-text-muted);
   border-radius: 50%;
   transform: translate(-50%, -50%);
 }
 
 .card-label {
   font-size: 11px;
-  color: #8b949e;
+  color: var(--mc-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 4px;
@@ -562,23 +562,23 @@ watch(() => props.entry, () => {
 
 .card-value {
   font-size: 14px;
-  color: #e6edf3;
+  color: var(--mc-text-primary);
   font-weight: 500;
   word-break: break-word;
 }
 
 .conn-type {
   font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-  color: #58a6ff !important;
+  color: var(--mc-accent-blue) !important;
   font-size: 13px !important;
 }
 
 .status-text.connected {
-  color: #3fb950;
+  color: var(--mc-accent-green);
 }
 
 .status-text.disconnected {
-  color: #8b949e;
+  color: var(--mc-text-muted);
 }
 
 /* 连接配置 */
@@ -589,13 +589,13 @@ watch(() => props.entry, () => {
 .section-label {
   font-size: 13px;
   font-weight: 600;
-  color: #e6edf3;
+  color: var(--mc-text-primary);
   margin-bottom: 10px;
 }
 
 .json-block {
-  background: #0d1117;
-  border: 1px solid #30363d;
+  background: var(--mc-bg-input);
+  border: 1px solid var(--mc-border-primary);
   border-radius: 8px;
   padding: 14px 16px;
   font-size: 12px;
@@ -609,28 +609,28 @@ watch(() => props.entry, () => {
 
 /* JSON 语法高亮 */
 :deep(.json-block .json-key) {
-  color: #58a6ff;
+  color: var(--mc-json-key);
 }
 
 :deep(.json-block .json-string) {
-  color: #3fb950;
+  color: var(--mc-json-string);
 }
 
 :deep(.json-block .json-number) {
-  color: #d2991d;
+  color: var(--mc-json-number);
 }
 
 :deep(.json-block .json-bool) {
-  color: #58a6ff;
+  color: var(--mc-json-key);
 }
 
 :deep(.json-block .json-null) {
-  color: #8b949e;
+  color: var(--mc-text-muted);
 }
 
 /* 工具列表 */
 .tools-section {
-  border-top: 1px solid #30363d;
+  border-top: 1px solid var(--mc-border-primary);
   padding-top: 24px;
 }
 
@@ -639,17 +639,17 @@ watch(() => props.entry, () => {
   align-items: center;
   gap: 10px;
   padding: 20px;
-  background: #161b22;
-  border: 1px solid #30363d;
+  background: var(--mc-bg-card);
+  border: 1px solid var(--mc-border-primary);
   border-radius: 8px;
-  color: #8b949e;
+  color: var(--mc-text-muted);
   font-size: 13px;
 }
 
 /* 工具卡片 */
 .tool-card {
-  background: #161b22;
-  border: 1px solid #30363d;
+  background: var(--mc-bg-card);
+  border: 1px solid var(--mc-border-primary);
   border-radius: 8px;
   margin-bottom: 8px;
   overflow: hidden;
@@ -657,11 +657,11 @@ watch(() => props.entry, () => {
 }
 
 .tool-card:hover {
-  border-color: #484f58;
+  border-color: var(--mc-text-dim);
 }
 
 .tool-card.expanded {
-  border-color: #30363d;
+  border-color: var(--mc-border-primary);
 }
 
 .tool-header {
@@ -672,7 +672,7 @@ watch(() => props.entry, () => {
 }
 
 .tool-header:hover {
-  background: #1c2333;
+  background: var(--mc-tool-header-hover);
 }
 
 .tool-header-left {
@@ -683,7 +683,7 @@ watch(() => props.entry, () => {
 
 .tool-chevron {
   font-size: 12px;
-  color: #8b949e;
+  color: var(--mc-text-muted);
   width: 14px;
   flex-shrink: 0;
 }
@@ -691,7 +691,7 @@ watch(() => props.entry, () => {
 .tool-name {
   font-size: 14px;
   font-weight: 600;
-  color: #58a6ff;
+  color: var(--mc-tool-name-text);
   font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
 }
 
@@ -715,7 +715,7 @@ watch(() => props.entry, () => {
 
 .copy-btn:hover {
   opacity: 1 !important;
-  background: #21262d;
+  background: var(--mc-bg-button);
 }
 
 .copy-icon {
@@ -731,7 +731,7 @@ watch(() => props.entry, () => {
   left: 0;
   width: 10px;
   height: 10px;
-  border: 1.5px solid #8b949e;
+  border: 1.5px solid var(--mc-text-muted);
   border-radius: 2px;
 }
 .copy-icon::after {
@@ -741,9 +741,9 @@ watch(() => props.entry, () => {
   right: 0;
   width: 10px;
   height: 10px;
-  border: 1.5px solid #8b949e;
+  border: 1.5px solid var(--mc-text-muted);
   border-radius: 2px;
-  background: #161b22;
+  background: var(--mc-copy-icon-bg);
 }
 
 .tool-body {
@@ -773,7 +773,7 @@ watch(() => props.entry, () => {
 .tool-field label {
   display: block;
   font-size: 11px;
-  color: #8b949e;
+  color: var(--mc-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   font-weight: 500;
@@ -782,7 +782,7 @@ watch(() => props.entry, () => {
 
 .tool-field span {
   font-size: 13px;
-  color: #c9d1d9;
+  color: var(--mc-text-secondary);
 }
 
 .schema-toggle {
@@ -794,7 +794,7 @@ watch(() => props.entry, () => {
 }
 
 .schema-toggle:hover {
-  color: #e6edf3;
+  color: var(--mc-text-primary);
 }
 
 .tool-chevron-sm {
@@ -804,8 +804,8 @@ watch(() => props.entry, () => {
 }
 
 .schema-block {
-  background: #0d1117;
-  border: 1px solid #30363d;
+  background: var(--mc-bg-input);
+  border: 1px solid var(--mc-border-primary);
   border-radius: 6px;
   padding: 12px 14px;
   font-size: 12px;
@@ -818,22 +818,22 @@ watch(() => props.entry, () => {
 }
 
 :deep(.schema-block .json-key) {
-  color: #58a6ff;
+  color: var(--mc-json-key);
 }
 
 :deep(.schema-block .json-string) {
-  color: #3fb950;
+  color: var(--mc-json-string);
 }
 
 :deep(.schema-block .json-number) {
-  color: #d2991d;
+  color: var(--mc-json-number);
 }
 
 :deep(.schema-block .json-bool) {
-  color: #58a6ff;
+  color: var(--mc-json-key);
 }
 
 :deep(.schema-block .json-null) {
-  color: #8b949e;
+  color: var(--mc-text-muted);
 }
 </style>

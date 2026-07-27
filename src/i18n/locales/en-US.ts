@@ -120,6 +120,12 @@ const enUS = {
       zhCN: "Chinese",
       enUS: "English",
     },
+    theme: {
+      title: "Theme",
+      description: "Select your preferred color scheme",
+      dark: "Dark",
+      light: "Light",
+    },
     server: {
       title: "HTTP Server",
       description: "Restart the app after changing settings",
@@ -144,6 +150,7 @@ const enUS = {
     },
     toast: {
       langChanged: "Language changed to {lang}",
+      themeChanged: "Theme changed to {theme}",
       dirOpened: "Storage directory opened",
       serverSaved: "Server config saved",
     },
