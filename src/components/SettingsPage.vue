@@ -268,7 +268,7 @@ async function saveServerConfig() {
         <div class="about-info">
           <div class="about-row">
             <span class="about-label">{{ t("settings.about.version") }}</span>
-            <span class="about-value">0.1.2</span>
+            <span class="about-value">0.1.3</span>
           </div>
         </div>
       </section>

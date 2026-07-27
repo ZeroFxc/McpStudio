@@ -1,6 +1,6 @@
 [package]
 name = "mcpstudio"
-version = "0.1.2"
+version = "0.1.3"
 description = "McpStudio - MCP 集市与路由中心"
 authors = ["Nirithy"]
 edition = "2021"
