@@ -183,13 +183,13 @@ async function onMcpDisconnected() {
     <div class="titlebar">
       <div class="titlebar-title">{{ t("app.title") }}</div>
       <div class="titlebar-controls">
-        <button class="titlebar-btn" @click="minimizeWindow">
+        <button class="titlebar-btn" @mousedown.stop="minimizeWindow">
           <span class="ctrl-icon ctrl-minimize"></span>
         </button>
-        <button class="titlebar-btn" @click="toggleMaximize">
+        <button class="titlebar-btn" @mousedown.stop="toggleMaximize">
           <span :class="['ctrl-icon', isMaximized ? 'ctrl-restore' : 'ctrl-maximize']"></span>
         </button>
-        <button class="titlebar-btn titlebar-close" @click="closeWindow">
+        <button class="titlebar-btn titlebar-close" @mousedown.stop="closeWindow">
           <span class="ctrl-icon ctrl-close"></span>
         </button>
       </div>
@@ -345,6 +345,13 @@ body {
   cursor: pointer;
   color: #8b949e;
   transition: background 0.15s ease, color 0.15s ease;
+  -webkit-app-region: no-drag;
+}
+
+/* 按钮内的图标也标记为不可拖拽 */
+.titlebar-btn .ctrl-icon {
+  -webkit-app-region: no-drag;
+  pointer-events: none;
 }
 
 .titlebar-btn:hover {

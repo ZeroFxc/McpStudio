@@ -130,10 +130,12 @@ async function saveServerConfig() {
               <span class="url-label">localhost:</span>
               <code>http://localhost:{{ serverPort }}/mcp</code>
             </div>
-            <div v-for="ip in localIps" :key="ip" class="url-item">
-              <span class="url-label">LAN:</span>
-              <code>http://{{ ip }}:{{ serverPort }}/mcp</code>
-            </div>
+            <template v-if="bindAddress === '0.0.0.0'">
+              <div v-for="ip in localIps" :key="ip" class="url-item">
+                <span class="url-label">LAN:</span>
+                <code>http://{{ ip }}:{{ serverPort }}/mcp</code>
+              </div>
+            </template>
           </div>
           <div class="server-hint">{{ t("settings.server.restartHint") }}</div>
           <button class="save-btn" @click="saveServerConfig">{{ t("settings.server.save") }}</button>
@@ -431,6 +433,17 @@ async function saveServerConfig() {
   font-family: inherit;
   box-sizing: border-box;
   transition: border-color 0.2s ease;
+}
+
+/* 隐藏数字输入框的增减箭头 */
+.server-row .form-group input[type="number"]::-webkit-inner-spin-button,
+.server-row .form-group input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.server-row .form-group input[type="number"] {
+  -moz-appearance: textfield;
 }
 
 .server-row .form-group input:focus,
