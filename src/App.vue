@@ -92,11 +92,23 @@ async function updateMaximizedState() {
   isMaximized.value = await appWindow.isMaximized();
 }
 
+/** 服务器状态（侧边栏展示用） */
+const serverPort = ref(9277);
+const localIps = ref<string[]>([]);
+
 onMounted(async () => {
   await updateMaximizedState();
   appWindow.onResized(() => {
     updateMaximizedState();
   });
+  // 获取服务器配置和本地 IP
+  try {
+    const config = await invoke<{ http_port: number; bind_address: string }>("get_server_config");
+    serverPort.value = config.http_port;
+  } catch { /* 忽略 */ }
+  try {
+    localIps.value = await invoke<string[]>("get_local_ips");
+  } catch { /* 忽略 */ }
 });
 
 /** 标签页配置 */
@@ -195,6 +207,13 @@ async function onMcpDisconnected() {
           @connected="onMcpConnected"
           @disconnected="onMcpDisconnected"
         />
+
+        <!-- 服务器状态 -->
+        <div class="server-status-bar">
+          <span class="status-dot"></span>
+          <span class="status-port">:{{ serverPort }}</span>
+          <span v-if="localIps.length" class="status-lan-ip">{{ localIps[0] }}:{{ serverPort }}</span>
+        </div>
       </aside>
 
       <!-- 右侧主区域 -->
@@ -250,6 +269,29 @@ body {
   font-size: 14px;
   color: #e6edf3;
   background: #0d1117;
+}
+
+/* 全局滚动条 - GitHub Dark 风格 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #30363d;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #484f58;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
 }
 </style>
 
@@ -542,5 +584,50 @@ body {
 .tab-content {
   flex: 1;
   overflow-y: auto;
+}
+
+/* ===== 侧边栏服务器状态条 ===== */
+.server-status-bar {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-top: 1px solid #30363d;
+  background: #0d1117;
+  font-size: 11px;
+  font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+  color: #8b949e;
+  flex-shrink: 0;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #3fb950;
+  flex-shrink: 0;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(63, 185, 80, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(63, 185, 80, 0);
+  }
+}
+
+.status-port {
+  color: #58a6ff;
+}
+
+.status-lan-ip {
+  color: #6e7681;
+  margin-left: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

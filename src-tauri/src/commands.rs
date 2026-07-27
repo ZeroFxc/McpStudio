@@ -187,10 +187,25 @@ pub async fn open_data_dir() -> Result<(), String> {
     Ok(())
 }
 
-/// 获取本机局域网 IP 地址列表
+/// 获取本机局域网 IP 地址列表（非回环 IPv4）
 #[tauri::command]
 pub async fn get_local_ips() -> Result<Vec<String>, String> {
-    let ip = local_ip_address::local_ip()
-        .map_err(|e| format!("获取本地 IP 失败: {}", e))?;
-    Ok(vec![ip.to_string()])
+    let ifaces = get_if_addrs::get_if_addrs()
+        .map_err(|e| format!("获取网络接口失败: {}", e))?;
+    let mut ips: Vec<String> = ifaces
+        .iter()
+        .filter_map(|iface| {
+            if iface.is_loopback() {
+                return None;
+            }
+            match iface.addr {
+                get_if_addrs::IfAddr::V4(ref v4) => Some(v4.ip.to_string()),
+                _ => None,
+            }
+        })
+        .collect();
+    // 排序保证稳定输出
+    ips.sort();
+    ips.dedup();
+    Ok(ips)
 }
