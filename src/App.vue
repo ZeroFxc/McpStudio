@@ -80,8 +80,8 @@ const mcpListRef = ref<InstanceType<typeof McpList> | null>(null);
 /** 窗口控制 */
 const appWindow = getCurrentWindow();
 const isMaximized = ref(false);
-/** 标记是否正在程序化切换最大化，阻止 onResized 干扰 */
-let toggling = false;
+/** resize 防抖定时器 */
+let resizeTimer: ReturnType<typeof setTimeout> | null = null;
 
 /** 窗口操作函数 */
 async function minimizeWindow() {
@@ -94,14 +94,11 @@ async function minimizeWindow() {
 
 async function toggleMaximize() {
   try {
-    toggling = true;
     await appWindow.toggleMaximize();
-    isMaximized.value = await appWindow.isMaximized();
+    // 直接切换状态，不依赖 isMaximized() 返回值（decorations: false 下可能不准）
+    isMaximized.value = !isMaximized.value;
   } catch (e) {
     console.error("toggleMaximize:", e);
-  } finally {
-    // 延迟清除标志，确保 onResized 中忽略此次事件
-    setTimeout(() => { toggling = false; }, 300);
   }
 }
 
@@ -113,9 +110,8 @@ async function closeWindow() {
   }
 }
 
-/** 更新窗口最大化状态（仅响应非程序化触发的 resize） */
+/** 更新窗口最大化状态（用于 onResized 兜底，处理 Win+↑ 等快捷键） */
 async function updateMaximizedState() {
-  if (toggling) return;
   try {
     isMaximized.value = await appWindow.isMaximized();
   } catch (e) {
@@ -131,8 +127,12 @@ onMounted(async () => {
   // 初始化主题
   initTheme();
   await updateMaximizedState();
+  // 防抖的 resize 监听，处理 Win+↑ 等非按钮触发的最大化
   appWindow.onResized(() => {
-    updateMaximizedState();
+    if (resizeTimer) clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      updateMaximizedState();
+    }, 250);
   });
   // 获取服务器配置和本地 IP
   try {
