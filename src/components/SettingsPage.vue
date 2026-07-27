@@ -3,6 +3,7 @@ import { ref, onMounted, inject } from "vue";
 import { invoke } from "@tauri-apps/api/core";
 import { useI18n, supportedLocales } from "../i18n";
 import type { Theme } from "../themes";
+import { isEnabled, enable, disable } from "@tauri-apps/plugin-autostart";
 
 const { t } = useI18n();
 
@@ -68,7 +69,35 @@ onMounted(async () => {
   } catch {
     // 获取 IP 失败时忽略
   }
+  // 检查开机自启状态
+  try {
+    autostartEnabled.value = await isEnabled();
+  } catch {
+    autostartEnabled.value = false;
+  }
 });
+
+/** 开机自启状态 */
+const autostartEnabled = ref(false);
+
+/** 切换开机自启 */
+async function toggleAutostart() {
+  try {
+    if (autostartEnabled.value) {
+      await disable();
+      autostartEnabled.value = false;
+    } else {
+      await enable();
+      autostartEnabled.value = true;
+    }
+    showToast(
+      autostartEnabled.value ? t("settings.autostart.enabled") : t("settings.autostart.disabled"),
+      "success"
+    );
+  } catch (err) {
+    showToast(String(err), "error");
+  }
+}
 
 /** 保存服务器配置 */
 async function saveServerConfig() {
@@ -197,6 +226,23 @@ async function saveServerConfig() {
         </div>
       </section>
 
+      <!-- 开机自启 -->
+      <section class="setting-section">
+        <div class="section-header">
+          <h3 class="section-title">{{ t("settings.autostart.title") }}</h3>
+          <p class="section-desc">{{ t("settings.autostart.description") }}</p>
+        </div>
+        <div class="autostart-row">
+          <span class="autostart-status">
+            {{ autostartEnabled ? t("settings.autostart.enabled") : t("settings.autostart.disabled") }}
+          </span>
+          <label class="toggle-switch" @click="toggleAutostart">
+            <input type="checkbox" :checked="autostartEnabled" tabindex="-1" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </section>
+
       <!-- 关于 -->
       <section class="setting-section">
         <div class="section-header">
@@ -206,7 +252,7 @@ async function saveServerConfig() {
         <div class="about-info">
           <div class="about-row">
             <span class="about-label">{{ t("settings.about.version") }}</span>
-            <span class="about-value">0.1.0</span>
+            <span class="about-value">0.1.2</span>
           </div>
         </div>
       </section>
@@ -621,5 +667,65 @@ async function saveServerConfig() {
 
 .save-btn:active {
   opacity: 0.85;
+}
+
+/* 开机自启 */
+.autostart-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.autostart-status {
+  font-size: 13px;
+  color: var(--mc-text-muted);
+}
+
+/* 切换开关 */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.toggle-switch input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.toggle-slider {
+  position: absolute;
+  inset: 0;
+  background: var(--mc-toggle-off-bg, #555);
+  border-radius: 12px;
+  transition: background 0.25s ease;
+}
+
+.toggle-slider::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.25s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background: var(--mc-accent-blue);
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+  transform: translateX(20px);
 }
 </style>
