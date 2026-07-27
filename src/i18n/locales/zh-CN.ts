@@ -144,6 +144,12 @@ const zhCN = {
       openDir: "打开目录",
       path: "路径",
     },
+    autostart: {
+      title: "开机自启",
+      description: "系统启动时自动运行 McpStudio",
+      enabled: "已开启",
+      disabled: "已关闭",
+    },
     about: {
       title: "关于",
       version: "版本",

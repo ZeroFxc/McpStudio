@@ -88,6 +88,10 @@ pub fn run() {
 
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_autostart::init(
+            tauri_plugin_autostart::MacosLauncher::LaunchAgent,
+            None,
+        ))
         .manage(SharedState { state: shared })
         .invoke_handler(tauri::generate_handler![
             commands::add_mcp,

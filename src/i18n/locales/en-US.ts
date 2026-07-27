@@ -144,6 +144,12 @@ const enUS = {
       openDir: "Open Directory",
       path: "Path",
     },
+    autostart: {
+      title: "Auto Start",
+      description: "Automatically launch McpStudio on system startup",
+      enabled: "Enabled",
+      disabled: "Disabled",
+    },
     about: {
       title: "About",
       version: "Version",
