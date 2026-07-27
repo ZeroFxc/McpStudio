@@ -10,7 +10,19 @@ fn dirs_next() -> Option<PathBuf> {
     {
         std::env::var("APPDATA").ok().map(PathBuf::from)
     }
-    #[cfg(not(target_os = "windows"))]
+    #[cfg(target_os = "android")]
+    {
+        // Android 使用 app 私有内部存储目录
+        // HOME 环境变量在 Android 上通常指向 /data/data/<package>
+        if let Ok(home) = std::env::var("HOME") {
+            let mut p = PathBuf::from(&home);
+            p.push("files");
+            return Some(p);
+        }
+        // 兜底：硬编码包名路径
+        Some(PathBuf::from("/data/data/com.nirithy.mcpstudio/files"))
+    }
+    #[cfg(not(any(target_os = "windows", target_os = "android")))]
     {
         std::env::var("HOME").ok().map(|h| {
             let mut p = PathBuf::from(h);
