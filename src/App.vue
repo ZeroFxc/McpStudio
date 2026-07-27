@@ -74,14 +74,6 @@ const mcpListRef = ref<InstanceType<typeof McpList> | null>(null);
 const appWindow = getCurrentWindow();
 const isMaximized = ref(false);
 
-/** 标题栏拖拽：在非按钮区域按下鼠标时触发窗口拖拽 */
-function onTitlebarMouseDown(e: MouseEvent) {
-  const target = e.target as HTMLElement;
-  // 如果点击的是按钮或其子元素，不触发拖拽
-  if (target.closest('.titlebar-btn')) return;
-  appWindow.startDragging();
-}
-
 /** 窗口操作函数 */
 async function minimizeWindow() {
   await appWindow.minimize();
@@ -188,7 +180,7 @@ async function onMcpDisconnected() {
     </Transition>
 
     <!-- 自定义标题栏 -->
-    <div class="titlebar" @mousedown="onTitlebarMouseDown">
+    <div class="titlebar" data-tauri-drag-region>
       <div class="titlebar-title">{{ t("app.title") }}</div>
       <div class="titlebar-controls">
         <button class="titlebar-btn" @click="minimizeWindow">
