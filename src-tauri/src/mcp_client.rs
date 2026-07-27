@@ -3,8 +3,11 @@ use std::sync::Arc;
 use rmcp::{
     ServiceExt,
     model::{CallToolRequestParams, CallToolResult, ClientCapabilities, ClientInfo, Implementation},
-    transport::{StreamableHttpClientTransport, TokioChildProcess},
+    transport::StreamableHttpClientTransport,
 };
+#[cfg(not(target_os = "android"))]
+use rmcp::transport::TokioChildProcess;
+#[cfg(not(target_os = "android"))]
 use tokio::process::Command;
 
 use crate::models::{ConnectionConfig, McpTool, ToolCallOutcome};
@@ -13,8 +16,11 @@ use crate::models::{ConnectionConfig, McpTool, ToolCallOutcome};
 /// 连接后立即获取工具列表，然后断开连接
 pub async fn discover_tools(config: &ConnectionConfig) -> Result<Vec<McpTool>, String> {
     match config {
+        #[cfg(not(target_os = "android"))]
         ConnectionConfig::Stdio { command, args } => discover_stdio(command, args).await,
         ConnectionConfig::StreamableHttp { url } => discover_http(url).await,
+        #[cfg(target_os = "android")]
+        ConnectionConfig::Stdio { .. } => Err("stdio 连接在 Android 上不可用，请使用 Streamable HTTP".to_string()),
     }
 }
 
@@ -30,7 +36,8 @@ fn convert_tool(t: rmcp::model::Tool) -> McpTool {
         returns: String::new(),
     }
 }
-/// 通过 stdio 子进程连接并发现工具
+/// 通过 stdio 子进程连接并发现工具（仅桌面端）
+#[cfg(not(target_os = "android"))]
 async fn discover_stdio(command: &str, args: &[String]) -> Result<Vec<McpTool>, String> {
     let mut cmd = Command::new(command);
     for arg in args {
@@ -102,11 +109,16 @@ pub async fn call_tool(
     arguments: Option<serde_json::Map<String, serde_json::Value>>,
 ) -> ToolCallOutcome {
     let raw_result = match config {
+        #[cfg(not(target_os = "android"))]
         ConnectionConfig::Stdio { command, args } => {
             call_tool_stdio(command, args, tool_name, arguments).await
         }
         ConnectionConfig::StreamableHttp { url } => {
             call_tool_http(url, tool_name, arguments).await
+        }
+        #[cfg(target_os = "android")]
+        ConnectionConfig::Stdio { .. } => {
+            Err("stdio 连接在 Android 上不可用".to_string())
         }
     };
 
@@ -156,7 +168,8 @@ pub async fn call_tool(
     }
 }
 
-/// 通过 stdio 连接调用工具
+/// 通过 stdio 连接调用工具（仅桌面端）
+#[cfg(not(target_os = "android"))]
 async fn call_tool_stdio(
     command: &str,
     args: &[String],

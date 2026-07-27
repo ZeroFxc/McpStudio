@@ -10,7 +10,6 @@ import AddMcpForm from "./components/AddMcpForm.vue";
 import UsageStats from "./components/UsageStats.vue";
 import SettingsPage from "./components/SettingsPage.vue";
 import Marketplace from "./components/Marketplace.vue";
-import EnvCheck from "./components/EnvCheck.vue";
 
 /** 初始化 i18n */
 const { t, currentLocale, setLocale } = provideI18n();
@@ -72,7 +71,7 @@ function showToast(text: string, type: "success" | "error" | "info" = "info") {
 provide("showToast", showToast);
 
 /** 当前活跃的标签页 */
-type TabKey = "add" | "detail" | "stats" | "settings" | "marketplace" | "envCheck";
+type TabKey = "add" | "detail" | "stats" | "settings" | "marketplace";
 
 const activeTab = ref<TabKey>("add");
 const selectedEntry = ref<McpEntry | null>(null);
@@ -151,7 +150,6 @@ const tabs = computed(() => [
   { key: "detail" as TabKey, label: t("app.tabs.detail") },
   { key: "stats" as TabKey, label: t("app.tabs.stats") },
   { key: "marketplace" as TabKey, label: t("app.tabs.marketplace") },
-  { key: "envCheck" as TabKey, label: t("app.tabs.envCheck") },
   { key: "settings" as TabKey, label: t("app.tabs.settings") },
 ]);
 
@@ -278,7 +276,6 @@ async function onMcpDisconnected() {
             />
             <UsageStats v-else-if="activeTab === 'stats'" :key="'stats'" />
             <Marketplace v-else-if="activeTab === 'marketplace'" :key="'marketplace'" />
-            <EnvCheck v-else-if="activeTab === 'envCheck'" :key="'envCheck'" />
             <SettingsPage v-else-if="activeTab === 'settings'" :key="'settings'" />
           </Transition>
         </div>

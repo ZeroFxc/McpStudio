@@ -8,7 +8,6 @@ const zhCN = {
       stats: "使用统计",
       settings: "设置",
       marketplace: "市场",
-      envCheck: "环境",
     },
   },
   mcpList: {
@@ -200,24 +199,7 @@ const zhCN = {
       noReadme: "暂无 README",
     },
   },
-  envCheck: {
-    title: "环境检测",
-    subtitle: "检测 MCP 常用的依赖环境是否已安装",
-    summary: "已安装 {installed} / 共 {total}",
-    checking: "检测中...",
-    notInstalled: "未安装",
-    expand: "展开",
-    collapse: "收起",
-    tools: {
-      python: "Python",
-      uv: "uv",
-      node: "Node.js",
-      npm: "npm",
-      git: "Git",
-      pip: "pip",
-    },
-  },
-};
+  };
 
 export default zhCN;
 export type LocaleDict = typeof zhCN;

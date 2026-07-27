@@ -86,12 +86,20 @@ pub fn run() {
         });
     });
 
-    tauri::Builder::default()
-        .plugin(tauri_plugin_opener::init())
-        .plugin(tauri_plugin_autostart::init(
+    #[allow(unused_mut)]
+    let mut builder = tauri::Builder::default()
+        .plugin(tauri_plugin_opener::init());
+
+    // 桌面端：注册 autostart 插件
+    #[cfg(not(target_os = "android"))]
+    {
+        builder = builder.plugin(tauri_plugin_autostart::init(
             tauri_plugin_autostart::MacosLauncher::LaunchAgent,
             None,
-        ))
+        ));
+    }
+
+    builder
         .manage(SharedState { state: shared })
         .invoke_handler(tauri::generate_handler![
             commands::add_mcp,
@@ -105,7 +113,6 @@ pub fn run() {
             commands::set_bind_address,
             commands::get_local_ips,
             commands::open_data_dir,
-            commands::check_env,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

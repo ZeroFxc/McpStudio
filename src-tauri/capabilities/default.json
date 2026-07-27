@@ -6,7 +6,6 @@
   "permissions": [
     "core:default",
     "opener:default",
-    "autostart:default",
     "core:window:allow-minimize",
     "core:window:allow-toggle-maximize",
     "core:window:allow-close",

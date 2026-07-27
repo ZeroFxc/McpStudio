@@ -3,21 +3,32 @@ import { ref, onMounted, inject } from "vue";
 import { invoke } from "@tauri-apps/api/core";
 import { useI18n, supportedLocales } from "../i18n";
 import type { Theme } from "../themes";
-import { isEnabled, enable, disable } from "@tauri-apps/plugin-autostart";
 
 const { t } = useI18n();
 
 /** 从 App.vue 注入的 Toast 函数 */
 const showToast = inject<(text: string, type?: "success" | "error" | "info") => void>("showToast", () => {});
-
-/** 从 App.vue 注入的 setLocale 函数 */
 const setLocale = inject<(locale: string) => void>("setLocale", () => {});
 const currentLocale = inject<{ value: string }>("currentLocale", { value: "zh-CN" });
-
-/** 从 App.vue 注入的主题相关函数 */
 const setTheme = inject<(name: string) => void>("setTheme", () => {});
 const currentThemeName = inject<{ value: string }>("currentThemeName", { value: "dark" });
 const getThemes = inject<() => Theme[]>("getThemes", () => []);
+
+/** 是否移动端（Android）- autostart 插件不可用 */
+const isMobile = ref(false);
+
+/** 动态导入 autostart API，Android 上返回 null */
+let autostartApi: { isEnabled: () => Promise<boolean>; enable: () => Promise<void>; disable: () => Promise<void> } | null = null;
+async function getAutostartApi() {
+  if (autostartApi !== null) return autostartApi;
+  try {
+    autostartApi = await import("@tauri-apps/plugin-autostart");
+    return autostartApi;
+  } catch {
+    isMobile.value = true;
+    return null;
+  }
+}
 
 /** 切换语言 */
 function switchLanguage(locale: string) {
@@ -69,11 +80,14 @@ onMounted(async () => {
   } catch {
     // 获取 IP 失败时忽略
   }
-  // 检查开机自启状态
-  try {
-    autostartEnabled.value = await isEnabled();
-  } catch {
-    autostartEnabled.value = false;
+  // 检查开机自启状态（仅桌面端）
+  const api = await getAutostartApi();
+  if (api) {
+    try {
+      autostartEnabled.value = await api.isEnabled();
+    } catch {
+      autostartEnabled.value = false;
+    }
   }
 });
 
@@ -82,12 +96,14 @@ const autostartEnabled = ref(false);
 
 /** 切换开机自启 */
 async function toggleAutostart() {
+  const api = await getAutostartApi();
+  if (!api) return;
   try {
     if (autostartEnabled.value) {
-      await disable();
+      await api.disable();
       autostartEnabled.value = false;
     } else {
-      await enable();
+      await api.enable();
       autostartEnabled.value = true;
     }
     showToast(
@@ -206,8 +222,8 @@ async function saveServerConfig() {
         </div>
       </section>
 
-      <!-- 存储设置 -->
-      <section class="setting-section">
+      <!-- 存储设置（仅桌面端） -->
+      <section v-if="!isMobile" class="setting-section">
         <div class="section-header">
           <h3 class="section-title">{{ t("settings.storage.title") }}</h3>
           <p class="section-desc">{{ t("settings.storage.description") }}</p>
@@ -226,8 +242,8 @@ async function saveServerConfig() {
         </div>
       </section>
 
-      <!-- 开机自启 -->
-      <section class="setting-section">
+      <!-- 开机自启（仅桌面端） -->
+      <section v-if="!isMobile" class="setting-section">
         <div class="section-header">
           <h3 class="section-title">{{ t("settings.autostart.title") }}</h3>
           <p class="section-desc">{{ t("settings.autostart.description") }}</p>

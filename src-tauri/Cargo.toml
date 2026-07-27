@@ -20,11 +20,22 @@ tauri-build = { version = "2", features = [] }
 [dependencies]
 tauri = { version = "2", features = [] }
 tauri-plugin-opener = "2"
-tauri-plugin-autostart = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 chrono = "0.4"
 tokio = { version = "1", features = ["full"] }
+schemars = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+axum = "0.8"
+tokio-util = { version = "0.7", features = ["rt"] }
+uuid = { version = "1.8", features = ["v4", "serde"] }
+
+# 桌面端独有依赖（Android 不可用）
+[target.'cfg(not(target_os = "android"))'.dependencies]
+tauri-plugin-autostart = "2"
+opener = "0.7"
+get_if_addrs = "0.5"
 rmcp = { path = "./rust-sdk-rmcp/crates/rmcp", features = [
     "transport-io",
     "transport-child-process",
@@ -33,14 +44,16 @@ rmcp = { path = "./rust-sdk-rmcp/crates/rmcp", features = [
     "transport-streamable-http-server",
     "client",
 ] }
-schemars = "1"
-tracing = "0.1"
-tracing-subscriber = { version = "0.3", features = ["env-filter"] }
-axum = "0.8"
-tokio-util = { version = "0.7", features = ["rt"] }
-uuid = { version = "1.8", features = ["v4", "serde"] }
-opener = "0.7"
-get_if_addrs = "0.5"
+
+# Android 平台依赖（禁用 child-process 传输）
+[target.'cfg(target_os = "android")'.dependencies]
+rmcp = { path = "./rust-sdk-rmcp/crates/rmcp", features = [
+    "transport-io",
+    "transport-streamable-http-client",
+    "transport-streamable-http-client-reqwest",
+    "transport-streamable-http-server",
+    "client",
+] }
 
 # Read the optimization guideline for more details: https://tauri.app/concept/size/#cargo-configuration
 [profile.release]

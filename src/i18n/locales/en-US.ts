@@ -8,7 +8,6 @@ const enUS = {
       stats: "Usage Stats",
       settings: "Settings",
       marketplace: "Marketplace",
-      envCheck: "Environment",
     },
   },
   mcpList: {
@@ -200,23 +199,6 @@ const enUS = {
       noReadme: "No README",
     },
   },
-  envCheck: {
-    title: "Environment Check",
-    subtitle: "Check if MCP dependencies are installed",
-    summary: "Installed {installed} / {total}",
-    checking: "Checking...",
-    notInstalled: "Not installed",
-    expand: "Expand",
-    collapse: "Collapse",
-    tools: {
-      python: "Python",
-      uv: "uv",
-      node: "Node.js",
-      npm: "npm",
-      git: "Git",
-      pip: "pip",
-    },
-  },
-};
+  };
 
 export default enUS;
